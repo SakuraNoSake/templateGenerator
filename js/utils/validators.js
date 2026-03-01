@@ -17,6 +17,15 @@ export function calculateSNILSCheckSum(numbers) {
     return checkSum === 100 ? 0 : checkSum;
 }
 
+export function validateGUID(guid){
+    if (!guid) return false;
+    const cleanedGuid = guid.replace(/\D/g, '');
+    if (cleanedGuid.length !== 16){
+        return false
+    }
+    return /^\d+$/.test(cleanedGuid);
+}
+
 export function validateForm(inputs) {
     const { templateType, dooName, dooInn, rowsCount, requestStatus, requestType } = inputs;
 

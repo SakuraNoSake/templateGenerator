@@ -73,7 +73,7 @@
                         <option value="groups">Группы</option>
                         <option value="staff">Кадры</option>
                     </select>
-                    <div class="example">Выберите тип данных, которые будут сгенерированы в файле</div>
+                    <div class="example">Выберите шаблон для заполнения</div>
                 </div>
 
                 <div>
@@ -123,6 +123,16 @@
                     <input type="text" id="dooInn" placeholder="Например: 1234567890" value=""
                            maxlength="12">
                     <div class="example">10 или 12 цифр (без пробелов и дефисов)</div>
+                </div>
+
+<!--                Кадры-->
+                <div>
+                    <label for="guidDoo" class="required">
+                        <i class="fas fa-building"></i> GUID Доо:
+                    </label>
+                    <input type="text" id="guidDoo" placeholder="Например: 4008000000003814"
+                           value="" maxlength="16">
+                    <div class="example">16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО.</div>
                 </div>
             </div>
         </div>
