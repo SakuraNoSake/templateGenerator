@@ -1,8 +1,7 @@
 // templates/statements.js
 import {
-    generateUUID, getCurrentDate, generateChildBirthDate, generateAgentBirthDate,
-    generateChildName, generateAgentName, generatePatronymic,
-    generateSNILS, generateSorSeries, generateRandomDigits
+    generateUUID, getCurrentDate,
+    generateSNILS, generateSorSeries, generateRandomDigits, generatePersonDate, generateBirthDate
 } from '../../../utils/generators.js';
 import { createResult } from '../../../utils/formatters.js';
 
@@ -203,16 +202,11 @@ const COLUMN_WIDTHS = [
 ];
 
 function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
-    const isMale = Math.random() > 0.5;
-    const sex = isMale ? '1' : '0';
-
-    const childName = generateChildName(isMale);
-
-    const agentSex = Math.random() > 0.5 ? '1' : '0';
-    const agentName = generateAgentName(agentSex);
-
-    const childBirthDate = generateChildBirthDate();
-    const agentBirthDate = generateAgentBirthDate();
+    const sex = Math.random() > 0.5 ? '1' : '0';
+    const childData = generatePersonDate(sex);
+    const agentData = generatePersonDate(sex);
+    const childBirthDate = generateBirthDate({minAge: 1, maxAge: 15});
+    const agentBirthDate = generateBirthDate({minAge: 20, maxAge: 50});
     const currentDate = getCurrentDate();
     const uuid = generateUUID();
     const sorSeries = generateSorSeries();
@@ -227,8 +221,8 @@ function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
         'Номер в системе источнике': '',
         'Статус обработки заявления: 1 - Ожидает рассмотрения; 2 - В очереди; 3 - Направлен': requestStatus,
         'Тип заявления: 1 - прием; 2 - перевод': requestType,
-        'Фамилия': childName.lastName,
-        'Имя': childName.firstName,
+        'Фамилия': childData.lastName,
+        'Имя': childData.firstName,
         'Отчество': '',
         'Дата рождения': childBirthDate,
         'Пол (Женский - 0 / Мужской - 1)': sex,
@@ -246,12 +240,12 @@ function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
         'Адрес временной регистрации': '',
         'Адрес проживания': '',
         'Унаследованный номер представителя1': '',
-        'Фамилия представителя1': agentName.lastName,
-        'Имя представителя1': agentName.firstName,
+        'Фамилия представителя1': agentData.lastName,
+        'Имя представителя1': agentData.firstName,
         'Отчество представителя1': '',
         'Дата рождения представителя1': agentBirthDate,
         'Степень родства представителя1 (Опекун, Попечитель, Орган опеки и попечительства, Иной представитель, Родитель)': 'Родитель',
-        'Пол представителя1 (Женский = 0, Мужской = 1)': agentSex,
+        'Пол представителя1 (Женский = 0, Мужской = 1)': sex,
         'Телефон представителя1': '',
         'Рабочий телефон представителя1': '',
         'Домашний телефон представителя1': '',

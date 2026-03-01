@@ -58,25 +58,12 @@ export function generateRandomDigits(length) {
     return number;
 }
 
-export function generateChildBirthDate() {
-    const today = new Date();
-    const maxDate = today;
-    const minDate = new Date();
-    minDate.setFullYear(today.getFullYear() - 7);
-    const randomTimestamp = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
-    const randomDate = new Date(randomTimestamp);
-    const day = String(randomDate.getDate()).padStart(2, '0');
-    const month = String(randomDate.getMonth() + 1).padStart(2, '0');
-    const year = randomDate.getFullYear();
-    return `${day}.${month}.${year}`;
-}
-
-export function generateAgentBirthDate() {
+export function generateBirthDate(options) {
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setFullYear(today.getFullYear() - 20);
+    maxDate.setFullYear(today.getFullYear() - options.minAge);
     const minDate = new Date();
-    minDate.setFullYear(today.getFullYear() - 60);
+    minDate.setFullYear(today.getFullYear() - options.maxAge);
     const randomTimestamp = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
     const randomDate = new Date(randomTimestamp);
     const day = String(randomDate.getDate()).padStart(2, '0');
@@ -85,20 +72,10 @@ export function generateAgentBirthDate() {
     return `${day}.${month}.${year}`;
 }
 
-export function generateChildName(isMale) {
-    return {
-        firstName: getRandomElement(isMale ? maleFirstNames : femaleFirstNames),
-        lastName: getRandomElement(isMale ? maleLastNames : femaleLastNames)
-    };
-}
-
-export function generateAgentName(sex) {
+export function generatePersonDate(sex) {
     return {
         firstName: getRandomElement(sex === 1 ? maleFirstNames : femaleFirstNames),
-        lastName: getRandomElement(sex === 1 ? maleLastNames : femaleLastNames)
+        lastName: getRandomElement(sex === 1 ? maleLastNames : femaleLastNames),
+        patronumic: getRandomElement(sex === 1 ? malePatronymics : femalePatronymics)
     };
-}
-
-export function generatePatronymic(isMale) {
-    return getRandomElement(isMale ? malePatronymics : femalePatronymics);
 }
