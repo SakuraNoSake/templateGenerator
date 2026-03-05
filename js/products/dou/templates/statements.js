@@ -1,7 +1,7 @@
 // templates/statements.js
 import {
     generateUUID, getCurrentDate,
-    generateSNILS, generateSorSeries, generateRandomDigits, generatePersonDate, generateBirthDate
+    generateSNILS, generateSorSeries, generateRandomDigits, generatePersonData, generateBirthDate
 } from '../../../utils/generators.js';
 import { createResult } from '../../../utils/formatters.js';
 
@@ -203,8 +203,8 @@ const COLUMN_WIDTHS = [
 
 function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
     const sex = Math.random() > 0.5 ? '1' : '0';
-    const childData = generatePersonDate(sex);
-    const agentData = generatePersonDate(sex);
+    const childData = generatePersonData(sex);
+    const agentData = generatePersonData(sex);
     const childBirthDate = generateBirthDate({minAge: 1, maxAge: 15});
     const agentBirthDate = generateBirthDate({minAge: 20, maxAge: 50});
     const currentDate = getCurrentDate();
@@ -289,7 +289,7 @@ function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
         'Срок действия льготы': '',
         'Кем выдан подтверждающий документ': '',
         'Язык обучения': '',
-        'Желаемая дата поступления': currentDate,
+        'Желаемая дата поступления': currentDate.fullDate,
         'Желаемый режим пребывания (1 - до 5 часов; 2 - 8-10 часов; 3 - 10,5-12 часов; 4 - 13-14 часов; 5 - 24 часа)': '3',
         'Желаемая направленность образовательной программы (1 - Общеразвивающая; 2 - Компенсирующая; 3 - Оздоровительная; 4 - Комбинированная; 5 - Семейные дошкольные группы; 6 - По присмотру и уходу)': 1,
         'Согласен на группу с альтернативным режимом пребывания (да/нет)': '',

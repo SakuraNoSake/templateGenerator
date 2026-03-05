@@ -17,12 +17,25 @@ export function generateUUID() {
     }).toUpperCase();
 }
 
+export function generateGroupName() {
+    const cleanUuid = generateUUID().replace(/-/g, '');
+    const shortUid = cleanUuid.substring(0, 5);
+    return `imp_group_${shortUid}`;
+}
+
 export function getCurrentDate() {
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const year = now.getFullYear();
-    return `${day}.${month}.${year}`;
+
+    return {
+        fullDate: `${day}.${month}.${year}`,
+        day: day,
+        month: month,
+        year: year,
+        shortYear: year.toString().slice(-2)
+    };
 }
 
 export function getCurrentTimestamp() {
@@ -72,7 +85,7 @@ export function generateBirthDate(options) {
     return `${day}.${month}.${year}`;
 }
 
-export function generatePersonDate(sex) {
+export function generatePersonData(sex) {
     return {
         firstName: getRandomElement(sex === 1 ? maleFirstNames : femaleFirstNames),
         lastName: getRandomElement(sex === 1 ? maleLastNames : femaleLastNames),

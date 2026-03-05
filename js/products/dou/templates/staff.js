@@ -1,6 +1,6 @@
 // templates/staff.js
 import {createResult } from '../../../utils/formatters.js';
-import {generateBirthDate, generatePersonDate, generateRandomDigits, generateSNILS} from "../../../utils/generators.js";
+import {generateBirthDate, generatePersonData, generateRandomDigits, generateSNILS} from "../../../utils/generators.js";
 
 const HEADERS = [
     'GUID школы 16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО. Список GUID можно получить в выгрузке из реестра.',
@@ -45,7 +45,7 @@ const COLUMN_WIDTHS = [
 
 function generateStaffRow (guidDoo) {
     const sex = Math.random() > 0.5 ? '1' : '0';
-    const employee = generatePersonDate(sex);
+    const employee = generatePersonData(sex);
     const employeeBirthDate = generateBirthDate({ minAge: 20, maxAge: 50 })
     const employeeSNILS = generateSNILS()
     const employeeDocumentSeries = generateRandomDigits(4);
@@ -61,7 +61,7 @@ function generateStaffRow (guidDoo) {
         'СНИЛС Формат поля текстовый, чтобы длинные номера не обрезались до 4,5Е+11 Допустимые маски СНИЛС: XXX-XXX-XXX XX XXXXXXXXXXX': employeeSNILS,
         'Телефон строго 11 символов, начиная с 8 укажите только 1 телефон, если нет, оставьте пустым Формат поля текстовый, чтобы длинные номера не обрезались до 4,5Е+11': '',
         'E-mail укажитель только 1 почту, если нет, оставьте пустым': '',
-        'Должность Выбрать из справочника Должности Если затрудняетесь, укажите всем Учитель': 'Учитель',
+        'Должность Выбрать из справочника Должности Если затрудняетесь, укажите всем Учитель': 'Воспитатель',
         'Дети': '',
         'Классы (Классное руководство)': '',
         'ИНН сотрудника': '',
