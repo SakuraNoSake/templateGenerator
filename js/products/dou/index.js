@@ -1,10 +1,8 @@
-// products/dou/index.js
-import {validateGUID, validateINN} from '../../utils/validators.js';
-import { generateUUID, getCurrentDate, getCurrentTimestamp } from '../../utils/generators.js';
+import { validateGUID, validateINN } from '../../utils/validators.js';
 import { DOU_CONSTANTS } from './config/constants.js';
 import { generateStatementsFile } from './templates/statements.js';
 import { generateGroupsFile } from './templates/groups.js';
-import { generatePersonalFilesFile } from './templates/person.js';
+import { generatePersonFile } from './templates/person.js';
 import { generateStaffFile } from './templates/staff.js';
 
 export function initDOU() {
@@ -20,6 +18,7 @@ export function initDOU() {
     const templateTypeSelect = document.getElementById('templateType');
     const requestStatusSelect = document.getElementById('requestStatus');
     const requestTypeSelect = document.getElementById('requestType');
+    const groupNameInput = document.getElementById('groupName')
 
     // Проверяем, что мы на форме ДОУ
     if (!generateBtn) {
@@ -53,32 +52,24 @@ export function initDOU() {
             const dooInnField = document.querySelector('[for="dooInn"]')?.parentElement;
             const rowsCountField = document.querySelector('[for="rowsCount"]')?.parentElement;
             const guidDooField = document.querySelector('[for="guidDoo"]')?.parentElement;
+            const groupName = document.querySelector('[for="groupName"]')?.parentElement;
 
             if (selectedValue === 'statements') {
-                // Для заявлений показываем все поля
                 if (statusField) statusField.style.display = 'block';
                 if (typeField) typeField.style.display = 'block';
                 if (dooNameField) dooNameField.style.display = 'block';
                 if (dooInnField) dooInnField.style.display = 'block';
                 if (rowsCountField) rowsCountField.style.display = 'block';
-                // Скрываем ненужные поля
                 if (guidDooField) guidDooField.style.display = 'none';
-
-                // Обновляем подсказку для количества строк
-                const rowExample = document.querySelector('#rowsCount + .example');
-                if (rowExample) {
-                    rowExample.textContent = 'Максимум 10,000 строк за одну генерацию.';
-                }
+                if (groupName) groupName.style.display = 'none';
             } else if (selectedValue === 'staff') {
-                // Поля для шабона кадров
                 if (guidDooField) guidDooField.style.display = 'block';
                 if (rowsCountField) rowsCountField.style.display = 'block';
-
-                // Скрываем ненужные поля для кадров
                 if (typeField) typeField.style.display = 'none';
                 if (statusField) statusField.style.display = 'none';
                 if (dooInnField) dooInnField.style.display = 'none';
                 if (dooNameField) dooNameField.style.display = 'none';
+                if (groupName) groupName.style.display = 'none';
             } else if (selectedValue === 'groups') {
                 if (dooNameField) dooNameField.style.display = 'block';
                 if (dooInnField) dooInnField.style.display = 'block';
@@ -86,19 +77,21 @@ export function initDOU() {
                 if (guidDooField) guidDooField.style.display = 'none';
                 if (typeField) typeField.style.display = 'none';
                 if (statusField) statusField.style.display = 'none';
+                if (groupName) groupName.style.display = 'none';
+            } else if (selectedValue === 'personal_files') {
+                if (dooNameField) dooNameField.style.display = 'block';
+                if (dooInnField) dooInnField.style.display = 'block';
+                if (rowsCountField) rowsCountField.style.display = 'block';
+                if (groupName) groupName.style.display = 'block'
+                if (guidDooField) guidDooField.style.display = 'none';
+                if (typeField) typeField.style.display = 'none';
+                if (statusField) statusField.style.display = 'none';
             } else {
-                // Для других шаблонов скрываем поля
                 if (statusField) statusField.style.display = 'none';
                 if (typeField) typeField.style.display = 'none';
                 if (dooNameField) dooNameField.style.display = 'none';
                 if (dooInnField) dooInnField.style.display = 'none';
                 if (rowsCountField) rowsCountField.style.display = 'none';
-
-                // Обновляем подсказку для количества строк
-                const rowExample = document.querySelector('#rowsCount + .example');
-                if (rowExample) {
-                    rowExample.textContent = 'Для данного шаблона будет создан пустой файл.';
-                }
             }
 
             console.log(`Выбран шаблон: ${this.options[this.selectedIndex].text}`);
@@ -110,7 +103,7 @@ export function initDOU() {
 
     // ===== ОСНОВНАЯ ФУНКЦИЯ ГЕНЕРАЦИИ =====
 
-    function generateAndDownloadXLSX(rowsCount, dooName, dooInn, templateType = 'statements', requestStatus = 1, requestType = 1, guidDoo) {
+    function generateAndDownloadXLSX(rowsCount, dooName, dooInn, templateType = 'statements', requestStatus = 1, requestType = 1, guidDoo, groupName) {
         loading.classList.add('active');
         generateBtn.disabled = true;
 
@@ -137,7 +130,7 @@ export function initDOU() {
                         result = generateGroupsFile(rowsCount, dooName, dooInn);
                         break;
                     case 'personal_files':
-                        result = generatePersonalFilesFile();
+                        result = generatePersonFile(rowsCount, dooName, dooInn, groupName);
                         break;
                     case 'staff':
                         result = generateStaffFile(rowsCount, guidDoo);
@@ -192,6 +185,7 @@ export function initDOU() {
         const requestStatus = requestStatusSelect ? parseInt(requestStatusSelect.value) : 1;
         const requestType = requestTypeSelect ? parseInt(requestTypeSelect.value) : 1;
         const guidDoo = guidDooInput.value.trim();
+        const groupName = groupNameInput.value.trim();
 
         // Для шаблона "Заявления" проверяем обязательные поля
         if (templateType === 'statements') {
@@ -298,6 +292,49 @@ export function initDOU() {
                 rowsCount,
                 templateType
             }
+        } else if (templateType === 'personal_files') {
+            if (!dooName) {
+                alert('Пожалуйста, введите краткое наименование ДОО');
+                dooNameInput.focus();
+                return false;
+            }
+
+            if (!dooInn) {
+                alert('Пожалуйста, введите ИНН ДОО');
+                dooInnInput.focus();
+                return false;
+            }
+
+            if (!validateINN(dooInn)) {
+                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
+                dooInnInput.focus();
+                return false;
+            }
+
+            if (isNaN(rowsCount) || rowsCount < 1) {
+                alert('Пожалуйста, введите корректное число строк (больше 0)');
+                rowsCountInput.focus();
+                return false;
+            }
+
+            if (rowsCount > 10000) {
+                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
+                    return false;
+                }
+            }
+
+            if(!groupName){
+                alert('Пожалуйста, введите название группы');
+                groupName.focus();
+                return false;
+            }
+            return {
+                dooName,
+                dooInn: dooInn.replace(/\D/g, ''),
+                rowsCount,
+                templateType,
+                groupName
+            }
         } else {
             return {
                 dooName: '',
@@ -324,7 +361,8 @@ export function initDOU() {
                     validated.templateType,
                     validated.requestStatus,
                     validated.requestType,
-                    validated.guidDoo
+                    validated.guidDoo,
+                    validated.groupName
                 );
             }
         });
@@ -388,8 +426,18 @@ export function initDOU() {
         });
     }
 
+    //Валидация названия группы
+    if (groupNameInput) {
+        groupNameInput.addEventListener('input', function(e) {
+            e.target.style.borderColor = e.target.value.trim() ? '#4CAF50' : '#e0e0e0';
+            e.target.style.backgroundColor = e.target.value.trim() ? '#f0fff0' : '';
+        });
+        groupNameInput.dispatchEvent(new Event('input'));
+    }
+
     if (dooInnInput) dooInnInput.dispatchEvent(new Event('input'));
     if (guidDooInput) guidDooInput.dispatchEvent(new Event('input'));
+    if (groupNameInput) groupNameInput.dispatchEvent(new Event('input'));
 
     console.log('Генератор XLSX файлов для ДОУ успешно инициализирован!');
     console.log('Доступные шаблоны:', DOU_CONSTANTS.templates);
