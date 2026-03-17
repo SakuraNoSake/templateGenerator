@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+.mb20 {
+    margin-bottom: 20px;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;

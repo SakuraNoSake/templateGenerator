@@ -19,6 +19,27 @@ export function initDOU() {
     const requestStatusSelect = document.getElementById('requestStatus');
     const requestTypeSelect = document.getElementById('requestType');
     const groupNameInput = document.getElementById('groupName')
+    const educProgramIdInput = document.getElementById('educProgramId')
+    const groupUidInput = document.getElementById('groupUid')
+
+    const fields = {
+        status: document.querySelector('[for="requestStatus"]')?.parentElement,
+        type: document.querySelector('[for="requestType"]')?.parentElement,
+        dooName: document.querySelector('[for="dooName"]')?.parentElement,
+        dooInn: document.querySelector('[for="dooInn"]')?.parentElement,
+        rowsCount: document.querySelector('[for="rowsCount"]')?.parentElement,
+        guidDoo: document.querySelector('[for="guidDoo"]')?.parentElement,
+        groupName: document.querySelector('[for="groupName"]')?.parentElement,
+        educProgramId: document.querySelector('[for="educProgramId"]')?.parentElement,
+        groupUid: document.querySelector('[for="groupUid"]')?.parentElement
+    };
+
+    const templateConfig = {
+        statements: ['status', 'type', 'dooName', 'dooInn', 'rowsCount'],
+        staff: ['guidDoo', 'rowsCount'],
+        groups: ['dooName', 'dooInn', 'rowsCount'],
+        personal_files: ['dooName', 'dooInn', 'rowsCount', 'groupName']
+    };
 
     // Проверяем, что мы на форме ДОУ
     if (!generateBtn) {
@@ -27,83 +48,50 @@ export function initDOU() {
     }
 
     // ===== ОБРАБОТЧИК ШАБЛОНОВ =====
+    function updateFormVisibility() {
+        const template = templateTypeSelect.value;
+        const status = requestStatusSelect?.value;
 
-    // Обработчик изменения выбора шаблона
+        Object.values(fields).forEach(field => {
+            if (field) field.style.display = 'none';
+        });
+
+        (templateConfig[template] || []).forEach(key => {
+            if (fields[key]) fields[key].style.display = 'block';
+        });
+
+        if (template === 'statements' && status === '3') {
+            if (fields.educProgramId && fields.groupUid) {
+                fields.educProgramId.style.display = 'block';
+                fields.groupUid.style.display = 'block';
+            }
+        }
+    }
+
     if (templateTypeSelect) {
-        templateTypeSelect.addEventListener('change', function() {
-            const selectedValue = this.value;
+        templateTypeSelect.addEventListener('change', () => {
+            const selectedValue = templateTypeSelect.value;
 
-            // Обновляем текст кнопки в зависимости от шаблона
             const buttonTexts = {
-                'statements': 'Заявления',
-                'personal_files': 'Личные дела',
-                'groups': 'Группы',
-                'staff': 'Кадры'
+                statements: 'Заявления',
+                personal_files: 'Личные дела',
+                groups: 'Группы',
+                staff: 'Кадры'
             };
-
             if (generateBtn && buttonTexts[selectedValue]) {
                 generateBtn.innerHTML = `<i class="fas fa-file-excel"></i> Сгенерировать ${buttonTexts[selectedValue]} и скачать XLSX файл`;
             }
-
-            // Отображение нужных полей для каждого шаблона
-            const statusField = document.querySelector('[for="requestStatus"]')?.parentElement;
-            const typeField = document.querySelector('[for="requestType"]')?.parentElement;
-            const dooNameField = document.querySelector('[for="dooName"]')?.parentElement;
-            const dooInnField = document.querySelector('[for="dooInn"]')?.parentElement;
-            const rowsCountField = document.querySelector('[for="rowsCount"]')?.parentElement;
-            const guidDooField = document.querySelector('[for="guidDoo"]')?.parentElement;
-            const groupName = document.querySelector('[for="groupName"]')?.parentElement;
-
-            if (selectedValue === 'statements') {
-                if (statusField) statusField.style.display = 'block';
-                if (typeField) typeField.style.display = 'block';
-                if (dooNameField) dooNameField.style.display = 'block';
-                if (dooInnField) dooInnField.style.display = 'block';
-                if (rowsCountField) rowsCountField.style.display = 'block';
-                if (guidDooField) guidDooField.style.display = 'none';
-                if (groupName) groupName.style.display = 'none';
-            } else if (selectedValue === 'staff') {
-                if (guidDooField) guidDooField.style.display = 'block';
-                if (rowsCountField) rowsCountField.style.display = 'block';
-                if (typeField) typeField.style.display = 'none';
-                if (statusField) statusField.style.display = 'none';
-                if (dooInnField) dooInnField.style.display = 'none';
-                if (dooNameField) dooNameField.style.display = 'none';
-                if (groupName) groupName.style.display = 'none';
-            } else if (selectedValue === 'groups') {
-                if (dooNameField) dooNameField.style.display = 'block';
-                if (dooInnField) dooInnField.style.display = 'block';
-                if (rowsCountField) rowsCountField.style.display = 'block';
-                if (guidDooField) guidDooField.style.display = 'none';
-                if (typeField) typeField.style.display = 'none';
-                if (statusField) statusField.style.display = 'none';
-                if (groupName) groupName.style.display = 'none';
-            } else if (selectedValue === 'personal_files') {
-                if (dooNameField) dooNameField.style.display = 'block';
-                if (dooInnField) dooInnField.style.display = 'block';
-                if (rowsCountField) rowsCountField.style.display = 'block';
-                if (groupName) groupName.style.display = 'block'
-                if (guidDooField) guidDooField.style.display = 'none';
-                if (typeField) typeField.style.display = 'none';
-                if (statusField) statusField.style.display = 'none';
-            } else {
-                if (statusField) statusField.style.display = 'none';
-                if (typeField) typeField.style.display = 'none';
-                if (dooNameField) dooNameField.style.display = 'none';
-                if (dooInnField) dooInnField.style.display = 'none';
-                if (rowsCountField) rowsCountField.style.display = 'none';
-            }
-
-            console.log(`Выбран шаблон: ${this.options[this.selectedIndex].text}`);
+            updateFormVisibility();
         });
-
-        // Инициализируем при загрузке
         templateTypeSelect.dispatchEvent(new Event('change'));
     }
 
-    // ===== ОСНОВНАЯ ФУНКЦИЯ ГЕНЕРАЦИИ =====
+    if (requestStatusSelect) {
+        requestStatusSelect.addEventListener('change', updateFormVisibility);
+    }
 
-    function generateAndDownloadXLSX(rowsCount, dooName, dooInn, templateType = 'statements', requestStatus = 1, requestType = 1, guidDoo, groupName) {
+    // ===== ОСНОВНАЯ ФУНКЦИЯ ГЕНЕРАЦИИ =====
+    function generateAndDownloadXLSX(rowsCount, dooName, dooInn, templateType = 'statements', requestStatus = 1, requestType = 1, guidDoo, groupName, educProgramId, groupUid) {
         loading.classList.add('active');
         generateBtn.disabled = true;
 
@@ -124,7 +112,7 @@ export function initDOU() {
                 // Вызываем соответствующую функцию для выбранного шаблона
                 switch(templateType) {
                     case 'statements':
-                        result = generateStatementsFile(rowsCount, dooName, dooInn, requestStatus, requestType);
+                        result = generateStatementsFile(rowsCount, dooName, dooInn, requestStatus, requestType, educProgramId, groupUid);
                         break;
                     case 'groups':
                         result = generateGroupsFile(rowsCount, dooName, dooInn);
@@ -186,6 +174,9 @@ export function initDOU() {
         const requestType = requestTypeSelect ? parseInt(requestTypeSelect.value) : 1;
         const guidDoo = guidDooInput.value.trim();
         const groupName = groupNameInput.value.trim();
+        const educProgramId = educProgramIdInput.value.trim();
+        const groupUid = groupUidInput.value.trim();
+
 
         // Для шаблона "Заявления" проверяем обязательные поля
         if (templateType === 'statements') {
@@ -207,6 +198,18 @@ export function initDOU() {
                 return false;
             }
 
+            if (!educProgramId) {
+                alert('Пожалуйста, введите ИД ОП, по которой будет выдано направление');
+                educProgramIdInput.focus();
+                return false
+            }
+
+            if (!groupUid) {
+                alert('Пожалуйста, введите Юид группы, в которую направлен ребенок')
+                groupUidInput.focus();
+                return false
+            }
+
             if (isNaN(rowsCount) || rowsCount < 1) {
                 alert('Пожалуйста, введите корректное число строк (больше 0)');
                 rowsCountInput.focus();
@@ -225,7 +228,9 @@ export function initDOU() {
                 rowsCount,
                 templateType,
                 requestStatus,
-                requestType
+                requestType,
+                educProgramId,
+                groupUid
             };
         } else if (templateType === 'staff') {
             if (!guidDoo) {
@@ -362,7 +367,9 @@ export function initDOU() {
                     validated.requestStatus,
                     validated.requestType,
                     validated.guidDoo,
-                    validated.groupName
+                    validated.groupName,
+                    validated.educProgramId,
+                    validated.groupUid
                 );
             }
         });
@@ -433,6 +440,32 @@ export function initDOU() {
             e.target.style.backgroundColor = e.target.value.trim() ? '#f0fff0' : '';
         });
         groupNameInput.dispatchEvent(new Event('input'));
+    }
+
+    // Валидация ИД ОП, по которой будет выдано направление
+    if (educProgramIdInput) {
+        educProgramIdInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            e.target.value = value;
+
+            if (value.length > 0) {
+                // просто проверка: есть ли число
+                e.target.style.borderColor = '#4CAF50';
+                e.target.style.backgroundColor = '#f0fff0';
+            } else {
+                e.target.style.borderColor = '#e0e0e0';
+                e.target.style.backgroundColor = '';
+            }
+        });
+    }
+
+    //Валидация Юид группы
+    if (groupUidInput) {
+        groupUidInput.addEventListener('input', function(e) {
+            e.target.style.borderColor = e.target.value.trim() ? '#4CAF50' : '#e0e0e0';
+            e.target.style.backgroundColor = e.target.value.trim() ? '#f0fff0' : '';
+        });
+        groupUidInput.dispatchEvent(new Event('input'));
     }
 
     if (dooInnInput) dooInnInput.dispatchEvent(new Event('input'));
