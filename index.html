@@ -102,13 +102,14 @@
         </div>
 
         <div class="section">
-            <h2 class="section-title">
-                <i class="fas fa-info-circle"></i> Данные ДОО
-            </h2>
+        <h2 class="section-title">
+            <i class="fas fa-info-circle"></i> Данные ДОО
+        </h2>
 
-            <div class="form-row">
-<!--                Заявления-->
-                <div>
+        <div class="form-row">
+            <!--                Заявления-->
+
+                <div class="mb20">
                     <label for="dooName" class="required">
                         <i class="fas fa-building"></i> Краткое наименование ДОО приоритет 1:
                     </label>
@@ -117,7 +118,7 @@
                     <div class="example">Пример: МБДОУ Детский сад "Солнышко"</div>
                 </div>
 
-                <div>
+                <div class="mb20">
                     <label for="dooInn" class="required">
                         <i class="fas fa-id-card"></i> ИНН ДОО приоритет 1:
                     </label>
@@ -126,27 +127,44 @@
                     <div class="example">10 или 12 цифр (без пробелов и дефисов)</div>
                 </div>
 
-<!--                Кадры-->
-                <div>
-                    <label for="guidDoo" class="required">
-                        <i class="fas fa-building"></i> GUID Доо:
+                <div class="mb20">
+                    <label for="educProgramId" class="required">
+                        <i class="fas fa-id-card"></i> ИД ОП, по которой выдано направление:
                     </label>
-                    <input type="text" id="guidDoo" placeholder="Например: 4008000000003814"
-                           value="" maxlength="16">
-                    <div class="example">16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО.</div>
-                </div>
-<!--                ЛД-->
-                <div>
-                    <label for="groupName" class="required">
-                        <i class="fas fa-building"></i> Назавание группы:
-                    </label>
-                    <input type="text" id="groupName"
-                           value="">
-                    <div class="example">Группа должна быть создана в ДОУ</div>
+                    <input type="text" id="educProgramId" placeholder="Например: 2" value="">
+                    <div class="example">ИД образовательной программы</div>
                 </div>
 
+                <div>
+                    <label for="groupUid" class="required">
+                        <i class="fas fa-id-card"></i>Юид группы, в которую направлен ребенок:
+                    </label>
+                    <input type="text" id="groupUid" placeholder="Например: 132ef4c0-2b68-48ac-8c86-6ad347bb0f2d" value="">
+                    <div class="example">ЮИД группы, можно посмотреть в реестре групп</div>
+                </div>
+
+
+            <!--                Кадры-->
+            <div>
+                <label for="guidDoo" class="required">
+                    <i class="fas fa-building"></i> GUID Доо:
+                </label>
+                <input type="text" id="guidDoo" placeholder="Например: 4008000000003814"
+                       value="" maxlength="16">
+                <div class="example">16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО.</div>
             </div>
+            <!--                ЛД-->
+            <div>
+                <label for="groupName" class="required">
+                    <i class="fas fa-building"></i> Назавание группы:
+                </label>
+                <input type="text" id="groupName"
+                       value="">
+                <div class="example">Группа должна быть создана в ДОУ</div>
+            </div>
+
         </div>
+    </div>
 
         <div class="section">
             <h2 class="section-title">

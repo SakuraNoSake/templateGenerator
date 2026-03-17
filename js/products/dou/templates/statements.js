@@ -201,7 +201,7 @@ const COLUMN_WIDTHS = [
     {wch: 15},  // Юид группы
 ];
 
-function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
+function generateStatementRow(dooName, dooInn, requestStatus, requestType, educProgramId, groupUid) {
     const sex = Math.random() > 0.5 ? '1' : '0';
     const childData = generatePersonData(sex);
     const agentData = generatePersonData(sex);
@@ -305,19 +305,19 @@ function generateStatementRow(dooName, dooInn, requestStatus, requestType) {
         'Краткое наименование ДОО приоритет 3': '',
         'ИНН ДОО приоритет 3': '',
         'Согласие на направление в ДОО вне списка (да/нет)': '',
-        'Дата выдачи направления': '',
-        'Краткое наименование ДОО куда направлен ребёнок': '',
-        'ИНН ДОО куда направлен ребёнок': '',
-        'ИД ОП, по которой выдано направление': '',
-        'Юид группы, в которую направлен ребенок': ''
+        'Дата выдачи направления': requestStatus === 3 ? '01.01.2025' : '',
+        'Краткое наименование ДОО куда направлен ребёнок': requestStatus === 3 ? dooName : '',
+        'ИНН ДОО куда направлен ребёнок': requestStatus === 3 ? dooInn : '',
+        'ИД ОП, по которой выдано направление': requestStatus === 3 ? educProgramId : '',
+        'Юид группы, в которую направлен ребенок': requestStatus === 3 ? groupUid : ''
     };
 }
 
-export function generateStatementsFile(rowsCount, dooName, dooInn, requestStatus, requestType) {
+export function generateStatementsFile(rowsCount, dooName, dooInn, requestStatus, requestType, educProgramId, groupUid) {
     const data = [];
 
     for (let i = 0; i < rowsCount; i++) {
-        data.push(generateStatementRow(dooName, dooInn, requestStatus, requestType));
+        data.push(generateStatementRow(dooName, dooInn, requestStatus, requestType, educProgramId, groupUid));
     }
 
     const wb = XLSX.utils.book_new();
