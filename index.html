@@ -10,60 +10,47 @@
 </head>
 
 <body>
-<!-- Навигационное меню -->
+
+<!-- Навигация -->
 <nav class="navbar">
     <div class="nav-container">
         <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="#school" class="nav-link" data-form="school">
-                    <i class="fas fa-school"></i> Запись в школу
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#dou" class="nav-link active" data-form="dou">
-                    <i class="fas fa-child"></i> Запись в ДОУ
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#spo" class="nav-link" data-form="spo">
-                    <i class="fas fa-graduation-cap"></i> Запись в СПО
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#udo" class="nav-link" data-form="udo">
-                    <i class="fas fa-music"></i> Запись в УДО
-                </a>
-            </li>
+            <li><a href="#school" class="nav-link" data-form="school"><i class="fas fa-school"></i> Запись в школу</a></li>
+            <li><a href="#dou" class="nav-link active" data-form="dou"><i class="fas fa-child"></i> Запись в ДОУ</a></li>
+            <li><a href="#spo" class="nav-link" data-form="spo"><i class="fas fa-graduation-cap"></i> Запись в СПО</a></li>
+            <li><a href="#udo" class="nav-link" data-form="udo"><i class="fas fa-music"></i> Запись в УДО</a></li>
         </ul>
     </div>
 </nav>
 
-<!-- Основной контент -->
 <main class="main-content">
+
     <header class="page-header">
         <h1 id="pageTitle">Генератор XLSX файлов для ДОУ</h1>
         <p id="pageSubtitle">Заполнение тестовыми данными шаблонов импорта ДОУ</p>
     </header>
 
-    <!-- Форма для школы (скрыта по умолчанию) -->
+    <!-- SCHOOL -->
     <div id="schoolForm" class="form-container">
         <div class="coming-soon">
             <i class="fas fa-school"></i>
             <h2>Запись в школу</h2>
-            <p>Данный модуль находится в разработке. Форма для генерации данных будет доступна в ближайшее время.
-            </p>
+            <p>Данный модуль находится в разработке. Форма для генерации данных будет доступна в ближайшее время.</p>
         </div>
     </div>
 
-    <!-- Форма для ДОУ (активна по умолчанию) -->
+    <!-- ДОУ -->
     <div id="douForm" class="form-container active">
+
+        <!-- Параметры -->
         <div class="section">
             <h2 class="section-title">
                 <i class="fas fa-file-alt"></i> Параметры генерации
             </h2>
 
-            <div class="form-column">
-                <div>
+            <div class="form-row">
+
+                <div class="form-group">
                     <label for="templateType" class="required">
                         <i class="fas fa-layer-group"></i> Выберите шаблон для генерации:
                     </label>
@@ -76,7 +63,7 @@
                     <div class="example">Выберите шаблон для заполнения</div>
                 </div>
 
-                <div>
+                <div class="form-group">
                     <label for="requestStatus" class="required">
                         <i class="fas fa-layer-group"></i> Выберите статус заявлений:
                     </label>
@@ -88,7 +75,7 @@
                     <div class="example">Заявления будут импортированы в выбранном статусе</div>
                 </div>
 
-                <div>
+                <div class="form-group">
                     <label for="requestType" class="required">
                         <i class="fas fa-layer-group"></i> Выберите тип заявлений:
                     </label>
@@ -98,126 +85,121 @@
                     </select>
                     <div class="example">Будут созданы заявления с выбранным типом</div>
                 </div>
+
             </div>
         </div>
 
+        <!-- ДОО -->
         <div class="section">
-        <h2 class="section-title">
-            <i class="fas fa-info-circle"></i> Данные ДОО
-        </h2>
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i> Данные ДОО
+            </h2>
 
-        <div class="form-row">
-            <!--                Заявления-->
+            <div class="form-row">
 
-                <div class="mb20">
+                <div class="form-group">
                     <label for="dooName" class="required">
                         <i class="fas fa-building"></i> Краткое наименование ДОО приоритет 1:
                     </label>
-                    <input type="text" id="dooName" placeholder="Например: МБДОУ Детский сад №123"
-                           value="">
+                    <input type="text" id="dooName">
                     <div class="example">Пример: МБДОУ Детский сад "Солнышко"</div>
                 </div>
 
-                <div class="mb20">
+                <div class="form-group">
                     <label for="dooInn" class="required">
                         <i class="fas fa-id-card"></i> ИНН ДОО приоритет 1:
                     </label>
-                    <input type="text" id="dooInn" placeholder="Например: 1234567890" value=""
-                           maxlength="12">
+                    <input type="text" id="dooInn" maxlength="12">
                     <div class="example">10 или 12 цифр (без пробелов и дефисов)</div>
                 </div>
 
-                <div class="mb20">
+                <div class="form-group">
                     <label for="educProgramId" class="required">
-                        <i class="fas fa-id-card"></i> ИД ОП, по которой выдано направление:
+                        <i class="fas fa-id-card"></i> ИД ОП:
                     </label>
-                    <input type="text" id="educProgramId" placeholder="Например: 2" value="">
+                    <input type="text" id="educProgramId">
                     <div class="example">ИД образовательной программы</div>
                 </div>
 
-                <div>
+                <div class="form-group">
                     <label for="groupUid" class="required">
-                        <i class="fas fa-id-card"></i>Юид группы, в которую направлен ребенок:
+                        <i class="fas fa-id-card"></i> Юид группы:
                     </label>
-                    <input type="text" id="groupUid" placeholder="Например: 132ef4c0-2b68-48ac-8c86-6ad347bb0f2d" value="">
-                    <div class="example">ЮИД группы, можно посмотреть в реестре групп</div>
+                    <input type="text" id="groupUid">
+                    <div class="example">ЮИД группы</div>
                 </div>
 
+                <div class="form-group">
+                    <label for="guidDoo" class="required">
+                        <i class="fas fa-building"></i> GUID Доо:
+                    </label>
+                    <input type="text" id="guidDoo">
+                    <div class="example">16-циферный идентификатор</div>
+                </div>
 
-            <!--                Кадры-->
-            <div>
-                <label for="guidDoo" class="required">
-                    <i class="fas fa-building"></i> GUID Доо:
-                </label>
-                <input type="text" id="guidDoo" placeholder="Например: 4008000000003814"
-                       value="" maxlength="16">
-                <div class="example">16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО.</div>
-            </div>
-            <!--                ЛД-->
-            <div>
-                <label for="groupName" class="required">
-                    <i class="fas fa-building"></i> Назавание группы:
-                </label>
-                <input type="text" id="groupName"
-                       value="">
-                <div class="example">Группа должна быть создана в ДОУ</div>
-            </div>
+                <div class="form-group">
+                    <label for="groupName" class="required">
+                        <i class="fas fa-building"></i> Название группы:
+                    </label>
+                    <input type="text" id="groupName">
+                    <div class="example">Группа должна быть создана</div>
+                </div>
 
+            </div>
         </div>
-    </div>
 
+        <!-- Дети -->
         <div class="section">
             <h2 class="section-title">
                 <i class="fas fa-users"></i> Данные воспитанников
             </h2>
 
             <div class="form-row">
-                <div>
-                    <label for="rowsCount" class="required">
-                        <i class="fas fa-list-ol"></i> Количество строк для генерации:
+                <div class="form-group">
+                    <label for="rowsCount">
+                        <i class="fas fa-list-ol"></i> Количество строк:
                     </label>
-                    <input type="number" id="rowsCount" min="1" max="10000" value=""
-                           placeholder="Введите число от 1 до 10000">
-                    <div class="example">Максимум 10,000 строк за одну генерацию.</div>
+                    <input type="number" id="rowsCount">
+                    <div class="example">Максимум 10,000 строк</div>
                 </div>
             </div>
         </div>
 
+        <!-- Loading -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Идет генерация файла... Пожалуйста, подождите</p>
-            <p class="example">Время генерации зависит от количества строк</p>
+            <p>Идет генерация файла...</p>
+            <p class="example">Время зависит от количества строк</p>
         </div>
 
         <button id="generateBtn" class="generate-btn">
-            <i class="fas fa-file-excel"></i> Сгенерировать и скачать XLSX файл
+            <i class="fas fa-file-excel"></i> Сгенерировать XLSX файл
         </button>
+
     </div>
 
-    <!-- Форма для СПО (скрыта по умолчанию) -->
+    <!-- СПО -->
     <div id="spoForm" class="form-container">
         <div class="coming-soon">
             <i class="fas fa-graduation-cap"></i>
             <h2>Запись в СПО</h2>
-            <p>Модуль для среднего профессионального образования находится в разработке.
-                Здесь будут поля для генерации данных о студентах техникумов и колледжей.</p>
+            <p>Модуль в разработке</p>
         </div>
     </div>
 
-    <!-- Форма для УДО (скрыта по умолчанию) -->
+    <!-- УДО -->
     <div id="udoForm" class="form-container">
         <div class="coming-soon">
             <i class="fas fa-music"></i>
             <h2>Запись в УДО</h2>
-            <p>Модуль для учреждений дополнительного образования (музыкальные школы, спортивные секции,
-                кружки) будет доступен в следующем обновлении.</p>
+            <p>Будет в следующем обновлении</p>
         </div>
     </div>
+
 </main>
 
-<!-- Библиотека SheetJS для работы с XLSX -->
 <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 <script type="module" src="js/main.js"></script>
-</body>
 
+</body>
 </html>
