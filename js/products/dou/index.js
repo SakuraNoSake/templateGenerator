@@ -57,13 +57,13 @@ export function initDOU() {
         });
 
         (templateConfig[template] || []).forEach(key => {
-            if (fields[key]) fields[key].style.display = 'block';
+            if (fields[key]) fields[key].style.display = 'flex';
         });
 
         if (template === 'statements' && status === '3') {
             if (fields.educProgramId && fields.groupUid) {
-                fields.educProgramId.style.display = 'block';
-                fields.groupUid.style.display = 'block';
+                fields.educProgramId.style.display = 'flex';
+                fields.groupUid.style.display = 'flex';
             }
         }
     }
@@ -78,11 +78,14 @@ export function initDOU() {
                 groups: 'Группы',
                 staff: 'Кадры'
             };
+
             if (generateBtn && buttonTexts[selectedValue]) {
                 generateBtn.innerHTML = `<i class="fas fa-file-excel"></i> Сгенерировать ${buttonTexts[selectedValue]} и скачать XLSX файл`;
             }
+
             updateFormVisibility();
         });
+
         templateTypeSelect.dispatchEvent(new Event('change'));
     }
 
@@ -180,6 +183,45 @@ export function initDOU() {
 
         // Для шаблона "Заявления" проверяем обязательные поля
         if (templateType === 'statements') {
+            if (!dooName) {
+                alert('Пожалуйста, введите краткое наименование ДОО');
+                dooNameInput.focus();
+                return false;
+            }
+
+            if (!dooInn) {
+                alert('Пожалуйста, введите ИНН ДОО');
+                dooInnInput.focus();
+                return false;
+            }
+
+            if (!validateINN(dooInn)) {
+                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
+                dooInnInput.focus();
+                return false;
+            }
+
+            if (isNaN(rowsCount) || rowsCount < 1) {
+                alert('Пожалуйста, введите корректное число строк (больше 0)');
+                rowsCountInput.focus();
+                return false;
+            }
+
+            if (rowsCount > 10000) {
+                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
+                    return false;
+                }
+            }
+
+            return {
+                dooName,
+                dooInn: dooInn.replace(/\D/g, ''),
+                rowsCount,
+                templateType,
+                requestStatus,
+                requestType
+            };
+        } else if (templateType === 'statements' && requestType === 3) {
             if (!dooName) {
                 alert('Пожалуйста, введите краткое наименование ДОО');
                 dooNameInput.focus();
