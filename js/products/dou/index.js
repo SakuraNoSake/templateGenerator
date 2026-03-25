@@ -1,4 +1,11 @@
-import { validateGUID, validateINN } from '../../utils/validators.js';
+import {
+    isRequired, isValidGUID,
+    isValidINN,
+    isValidRowsCount,
+    normalizeNumber,
+    validateGUID,
+    validateINN
+} from '../../utils/validators.js';
 import { DOU_CONSTANTS } from './config/constants.js';
 import { generateStatementsFile } from './templates/statements.js';
 import { generateGroupsFile } from './templates/groups.js';
@@ -7,6 +14,8 @@ import { generateStaffFile } from './templates/staff.js';
 
 export function initDOU() {
     console.log('Инициализация ДОУ с константами:', DOU_CONSTANTS);
+    //Конфиг
+    const { buttonTexts, templateConfig } = DOU_CONSTANTS;
 
     // Элементы DOM для ДОУ
     const generateBtn = document.getElementById('generateBtn');
@@ -34,17 +43,29 @@ export function initDOU() {
         groupUid: document.querySelector('[for="groupUid"]')?.parentElement
     };
 
-    const templateConfig = {
-        statements: ['status', 'type', 'dooName', 'dooInn', 'rowsCount'],
-        staff: ['guidDoo', 'rowsCount'],
-        groups: ['dooName', 'dooInn', 'rowsCount'],
-        personal_files: ['dooName', 'dooInn', 'rowsCount', 'groupName']
-    };
 
     // Проверяем, что мы на форме ДОУ
     if (!generateBtn) {
         console.log('Не найдены элементы формы ДОУ');
         return;
+    }
+
+    function clearInputs() {
+        [
+            dooNameInput,
+            dooInnInput,
+            rowsCountInput,
+            guidDooInput,
+            groupNameInput,
+            educProgramIdInput,
+            groupUidInput
+        ].forEach(input => {
+            if (input) {
+                input.value = '';
+                input.style.borderColor = '#e0e0e0';
+                input.style.backgroundColor = '';
+            }
+        });
     }
 
     // ===== ОБРАБОТЧИК ШАБЛОНОВ =====
@@ -71,21 +92,12 @@ export function initDOU() {
     if (templateTypeSelect) {
         templateTypeSelect.addEventListener('change', () => {
             const selectedValue = templateTypeSelect.value;
-
-            const buttonTexts = {
-                statements: 'Заявления',
-                personal_files: 'Личные дела',
-                groups: 'Группы',
-                staff: 'Кадры'
-            };
-
+            clearInputs();
             if (generateBtn && buttonTexts[selectedValue]) {
                 generateBtn.innerHTML = `<i class="fas fa-file-excel"></i> Сгенерировать ${buttonTexts[selectedValue]} и скачать XLSX файл`;
             }
-
             updateFormVisibility();
         });
-
         templateTypeSelect.dispatchEvent(new Event('change'));
     }
 
@@ -167,231 +179,120 @@ export function initDOU() {
     }
 
     // ===== ВАЛИДАЦИЯ ФОРМЫ =====
+    function showError(message, input) {
+        alert(message);
+        input?.focus();
+        return false;
+    }
+
+    const templateValidators = {
+        statements: (data, inputs) => {
+            if (!validateBaseFields(data, inputs)) return false;
+
+            if (data.requestType === 3) {
+                if (!isRequired(data.educProgramId)) {
+                    return showError('Введите ID образовательной программы', inputs.educProgramIdInput);
+                }
+
+                if (!isRequired(data.groupUid)) {
+                    return showError('Введите UID группы', inputs.groupUidInput);
+                }
+            }
+
+            return true;
+        },
+
+        staff: (data, inputs) => {
+            if (!isRequired(data.guidDoo)) {
+                return showError('Введите GUID ДОО', inputs.guidDooInput);
+            }
+
+            if (!isValidGUID(data.guidDoo)) {
+                return showError('Некорректный GUID', inputs.guidDooInput);
+            }
+
+            if (!isValidRowsCount(data.rowsCount)) {
+                return showError('Некорректное число строк', inputs.rowsCountInput);
+            }
+
+            return true;
+        },
+
+        groups: (data, inputs) => {
+            return validateBaseFields(data, inputs);
+        },
+
+        personal_files: (data, inputs) => {
+            if (!validateBaseFields(data, inputs)) return false;
+
+            if (!isRequired(data.groupName)) {
+                return showError('Введите название группы', inputs.groupNameInput);
+            }
+            return true;
+        }
+    };
+
+    function validateBaseFields({ dooName, dooInn, rowsCount }, inputs) {
+        if (!isRequired(dooName)) {
+            return showError('Введите наименование ДОО', inputs.dooNameInput);
+        }
+
+        if (!isRequired(dooInn)) {
+            return showError('Введите ИНН ДОО', inputs.dooInnInput);
+        }
+
+        if (!isValidINN(dooInn)) {
+            return showError('Некорректный ИНН', inputs.dooInnInput);
+        }
+
+        if (!isValidRowsCount(rowsCount)) {
+            return showError('Некорректное число строк', inputs.rowsCountInput);
+        }
+
+        if (rowsCount > 10000) {
+            if (!confirm(`Сгенерировать ${rowsCount} строк?`)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     function validateForm() {
-        const dooName = dooNameInput.value.trim();
-        const dooInn = dooInnInput.value.trim();
-        const rowsCount = parseInt(rowsCountInput.value);
-        const templateType = templateTypeSelect ? templateTypeSelect.value : 'statements';
-        const requestStatus = requestStatusSelect ? parseInt(requestStatusSelect.value) : 1;
-        const requestType = requestTypeSelect ? parseInt(requestTypeSelect.value) : 1;
-        const guidDoo = guidDooInput.value.trim();
-        const groupName = groupNameInput.value.trim();
-        const educProgramId = educProgramIdInput.value.trim();
-        const groupUid = groupUidInput.value.trim();
+        const data = {
+            dooName: dooNameInput.value.trim(),
+            dooInn: dooInnInput.value.trim(),
+            rowsCount: parseInt(rowsCountInput.value),
+            templateType: templateTypeSelect?.value || 'statements',
+            requestStatus: parseInt(requestStatusSelect?.value || 1),
+            requestType: parseInt(requestTypeSelect?.value || 1),
+            guidDoo: guidDooInput.value.trim(),
+            groupName: groupNameInput.value.trim(),
+            educProgramId: educProgramIdInput.value.trim(),
+            groupUid: groupUidInput.value.trim()
+        };
 
+        const inputs = {
+            dooNameInput,
+            dooInnInput,
+            rowsCountInput,
+            guidDooInput,
+            groupNameInput,
+            educProgramIdInput,
+            groupUidInput
+        };
 
-        // Для шаблона "Заявления" проверяем обязательные поля
-        if (templateType === 'statements') {
-            if (!dooName) {
-                alert('Пожалуйста, введите краткое наименование ДОО');
-                dooNameInput.focus();
-                return false;
-            }
+        const validator = templateValidators[data.templateType];
 
-            if (!dooInn) {
-                alert('Пожалуйста, введите ИНН ДОО');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (!validateINN(dooInn)) {
-                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (isNaN(rowsCount) || rowsCount < 1) {
-                alert('Пожалуйста, введите корректное число строк (больше 0)');
-                rowsCountInput.focus();
-                return false;
-            }
-
-            if (rowsCount > 10000) {
-                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
-                    return false;
-                }
-            }
-
-            return {
-                dooName,
-                dooInn: dooInn.replace(/\D/g, ''),
-                rowsCount,
-                templateType,
-                requestStatus,
-                requestType
-            };
-        } else if (templateType === 'statements' && requestType === 3) {
-            if (!dooName) {
-                alert('Пожалуйста, введите краткое наименование ДОО');
-                dooNameInput.focus();
-                return false;
-            }
-
-            if (!dooInn) {
-                alert('Пожалуйста, введите ИНН ДОО');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (!validateINN(dooInn)) {
-                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (!educProgramId) {
-                alert('Пожалуйста, введите ИД ОП, по которой будет выдано направление');
-                educProgramIdInput.focus();
-                return false
-            }
-
-            if (!groupUid) {
-                alert('Пожалуйста, введите Юид группы, в которую направлен ребенок')
-                groupUidInput.focus();
-                return false
-            }
-
-            if (isNaN(rowsCount) || rowsCount < 1) {
-                alert('Пожалуйста, введите корректное число строк (больше 0)');
-                rowsCountInput.focus();
-                return false;
-            }
-
-            if (rowsCount > 10000) {
-                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
-                    return false;
-                }
-            }
-
-            return {
-                dooName,
-                dooInn: dooInn.replace(/\D/g, ''),
-                rowsCount,
-                templateType,
-                requestStatus,
-                requestType,
-                educProgramId,
-                groupUid
-            };
-        } else if (templateType === 'staff') {
-            if (!guidDoo) {
-                alert('Пожалуйста, введите GUID Доо');
-                guidDooInput.focus();
-                return false;
-            }
-
-            if(!validateGUID(guidDoo)){
-                alert('Пожалуйста, введите корректный GUID Доо (16 цифр)')
-                guidDooInput.focus();
-                return false;
-            }
-
-            if (isNaN(rowsCount) || rowsCount < 1) {
-                alert('Пожалуйста, введите корректное число строк (больше 0)');
-                rowsCountInput.focus();
-                return false;
-            }
-
-            if (rowsCount > 10000) {
-                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
-                    return false;
-                }
-            }
-            return {
-                guidDoo: guidDoo.replace(/\D/g, ''),
-                rowsCount,
-                templateType,
-            }
-        } else if (templateType === 'groups') {
-            if (!dooName) {
-                alert('Пожалуйста, введите краткое наименование ДОО');
-                dooNameInput.focus();
-                return false;
-            }
-
-            if (!dooInn) {
-                alert('Пожалуйста, введите ИНН ДОО');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (!validateINN(dooInn)) {
-                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (isNaN(rowsCount) || rowsCount < 1) {
-                alert('Пожалуйста, введите корректное число строк (больше 0)');
-                rowsCountInput.focus();
-                return false;
-            }
-
-            if (rowsCount > 10000) {
-                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
-                    return false;
-                }
-            }
-            return {
-                dooName,
-                dooInn: dooInn.replace(/\D/g, ''),
-                rowsCount,
-                templateType
-            }
-        } else if (templateType === 'personal_files') {
-            if (!dooName) {
-                alert('Пожалуйста, введите краткое наименование ДОО');
-                dooNameInput.focus();
-                return false;
-            }
-
-            if (!dooInn) {
-                alert('Пожалуйста, введите ИНН ДОО');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (!validateINN(dooInn)) {
-                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
-                dooInnInput.focus();
-                return false;
-            }
-
-            if (isNaN(rowsCount) || rowsCount < 1) {
-                alert('Пожалуйста, введите корректное число строк (больше 0)');
-                rowsCountInput.focus();
-                return false;
-            }
-
-            if (rowsCount > 10000) {
-                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
-                    return false;
-                }
-            }
-
-            if(!groupName){
-                alert('Пожалуйста, введите название группы');
-                groupName.focus();
-                return false;
-            }
-            return {
-                dooName,
-                dooInn: dooInn.replace(/\D/g, ''),
-                rowsCount,
-                templateType,
-                groupName
-            }
-        } else {
-            return {
-                dooName: '',
-                dooInn: '',
-                rowsCount: 0,
-                templateType,
-                requestStatus: 1,
-                requestType: 1
-            };
+        if (validator && !validator(data, inputs)) {
+            return false;
         }
+
+        return {
+            ...data,
+            dooInn: normalizeNumber(data.dooInn),
+            guidDoo: normalizeNumber(data.guidDoo)
+        };
     }
 
     // ===== ОБРАБОТЧИК КЛИКА ПО КНОПКЕ =====

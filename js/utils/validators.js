@@ -26,52 +26,31 @@ export function validateGUID(guid){
     return /^\d+$/.test(cleanedGuid);
 }
 
-export function validateForm(inputs) {
-    const { templateType, dooName, dooInn, rowsCount, requestStatus, requestType } = inputs;
-
-    if (templateType === 'statements') {
-        if (!dooName) {
-            alert('Пожалуйста, введите краткое наименование ДОО');
-            return false;
-        }
-
-        if (!dooInn) {
-            alert('Пожалуйста, введите ИНН ДОО');
-            return false;
-        }
-
-        if (!validateINN(dooInn)) {
-            alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
-            return false;
-        }
-
-        if (isNaN(rowsCount) || rowsCount < 1) {
-            alert('Пожалуйста, введите корректное число строк (больше 0)');
-            return false;
-        }
-
-        if (rowsCount > 10000) {
-            if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
-                return false;
-            }
-        }
-
-        return {
-            dooName,
-            dooInn: dooInn.replace(/\D/g, ''),
-            rowsCount,
-            templateType,
-            requestStatus,
-            requestType
-        };
-    }
-
-    return {
-        dooName: '',
-        dooInn: '',
-        rowsCount: 0,
-        templateType,
-        requestStatus: 1,
-        requestType: 1
-    };
+export function isRequired(value) {
+    return value && value.trim() !== '';
 }
+
+export function isValidINN(inn) {
+    const clean = inn.replace(/\D/g, '');
+    return clean.length === 10 || clean.length === 12;
+}
+
+export function isValidGUID(guid) {
+    const clean = guid.replace(/\D/g, '');
+    return clean.length === 16;
+}
+
+export function isValidRowsCount(value) {
+    const num = parseInt(value);
+    return !isNaN(num) && num > 0;
+}
+
+export function normalizeNumber(value) {
+    return value.replace(/\D/g, '');
+}
+
+
+
+
+
+
