@@ -14,7 +14,6 @@ import { generateStaffFile } from './templates/staff.js';
 
 export function initDOU() {
     console.log('Инициализация ДОУ с константами:', DOU_CONSTANTS);
-    //Конфиг
     const { buttonTexts, templateConfig } = DOU_CONSTANTS;
 
     // Элементы DOM для ДОУ
@@ -110,12 +109,12 @@ export function initDOU() {
         loading.classList.add('active');
         generateBtn.disabled = true;
 
-        const buttonTexts = {
-            'statements': 'Заявления',
-            'personal_files': 'Личные дела',
-            'groups': 'Группы',
-            'staff': 'Кадры'
-        };
+        // const buttonTexts = {
+        //     'statements': 'Заявления',
+        //     'personal_files': 'Личные дела',
+        //     'groups': 'Группы',
+        //     'staff': 'Кадры'
+        // };
 
         generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Генерация ${buttonTexts[templateType] || 'файла'}...`;
 
