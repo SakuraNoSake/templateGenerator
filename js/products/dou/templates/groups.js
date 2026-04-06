@@ -1,6 +1,6 @@
 // templates/groups.js
-import { createResult } from '../../../utils/formatters.js';
 import {generateGroupName, getCurrentDate} from "../../../utils/generators.js";
+import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 
 const HEADERS = [
     'Краткое наименование ДОО',
@@ -50,27 +50,30 @@ function generateGroupRow (dooName, dooInn) {
     const groupName = generateGroupName();
     const educYear = getCurrentDate()
 
-    return {
-        'Краткое наименование ДОО' : dooName,
-        'ИНН ДОО': dooInn,
-        'Уникальный идентификатор группы из старой системы': '',
-        'Название группы': groupName,
-        'Учебный год в формате ГГГГ': educYear.year,
-        'Дата начала действия в формате ДД.ММ.ГГГГ': '01.01.2026',
-        'Дата окончания действия в формате ДД.ММ.ГГГГ': '01.01.2999',
-        'Возрастная категория - От (в мес.)': '2',
-        'Возрастная категория - До (в мес.)': '36',
-        'Код Режима работы группы из классификатора' : '1',
-        'Кол-во мест по СанПин': '25',
-        'Фактическая наполняемость': '25',
-        'Кол-во мест кратковременного пребывания': '25',
-        'Площадь помещения группы': '20',
-        'Кол-во воспитателей': '3',
-        'Код Направленности группы из классификатора': '1',
-        'Код Типа ОВЗ из классификатора для групп компенсирующей (код 2) или комбинированной (код 3) направленности': '',
-        'Код Профиля из классификатора для групп оздоровительной направленности (код 4)': '',
-        'Признак реализации основной ОП дошкольного образования для семейных групп (код 5) ( 0 - нет, 1 - да)': ''
-    }
+    return HEADERS.map(header => {
+        const rowObj = {
+            'Краткое наименование ДОО' : dooName,
+            'ИНН ДОО': dooInn,
+            'Уникальный идентификатор группы из старой системы': '',
+            'Название группы': groupName,
+            'Учебный год в формате ГГГГ': educYear.year,
+            'Дата начала действия в формате ДД.ММ.ГГГГ': '01.01.2026',
+            'Дата окончания действия в формате ДД.ММ.ГГГГ': '01.01.2999',
+            'Возрастная категория - От (в мес.)': '2',
+            'Возрастная категория - До (в мес.)': '36',
+            'Код Режима работы группы из классификатора' : '1',
+            'Кол-во мест по СанПин': '25',
+            'Фактическая наполняемость': '25',
+            'Кол-во мест кратковременного пребывания': '25',
+            'Площадь помещения группы': '20',
+            'Кол-во воспитателей': '3',
+            'Код Направленности группы из классификатора': '1',
+            'Код Типа ОВЗ из классификатора для групп компенсирующей (код 2) или комбинированной (код 3) направленности': '',
+            'Код Профиля из классификатора для групп оздоровительной направленности (код 4)': '',
+            'Признак реализации основной ОП дошкольного образования для семейных групп (код 5) ( 0 - нет, 1 - да)': ''
+        };
+        return rowObj[header] ?? '';
+    });
 }
 
 export function generateGroupsFile(rowsCount, dooName, dooInn, educYear) {
@@ -80,12 +83,11 @@ export function generateGroupsFile(rowsCount, dooName, dooInn, educYear) {
         data.push(generateGroupRow(dooName, dooInn, educYear));
     }
 
-    const wb = XLSX.utils.book_new();
-    const rows = data.map(row => HEADERS.map(header => row[header] || ''));
-    const wsData = [HEADERS, ...rows];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    ws['!cols'] = COLUMN_WIDTHS;
-    XLSX.utils.book_append_sheet(wb, ws, 'import-eo-group-for-doo');
-
-    return createResult(wb, 'import-eo-group-for-doo',  data.length);
+    return buildXlsxFile({
+        headers: HEADERS,
+        data,
+        columnWidths: COLUMN_WIDTHS,
+        sheetName: 'import-eo-group-for-doo',
+        fileName: 'import-eo-group-for-doo'
+    });
 }

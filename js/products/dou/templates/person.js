@@ -1,11 +1,11 @@
 // templates/personal-files.js
-import { createEmptyWorkbook, createResult } from '../../../utils/formatters.js';
 import {
     generateBirthDate,
     generatePersonData,
     generateRandomDigits,
     generateSorSeries
 } from "../../../utils/generators.js";
+import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 
 const HEADERS = [
     'Краткое наименование ДОО',
@@ -241,13 +241,16 @@ function generatePersonRow(dooName, dooInn, groupName) {
 
 export function generatePersonFile(rowsCount, dooName, dooInn, groupName) {
     const data = [];
+
     for(let i = 0; i < rowsCount; i++) {
         data.push(generatePersonRow(dooName, dooInn, groupName));
     }
-    const wb = XLSX.utils.book_new();
-    const wsData = [HEADERS, ...data];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    ws['!cols'] = COLUMN_WIDTHS;
-    XLSX.utils.book_append_sheet(wb, ws, 'import-person-in-doo');
-    return createResult(wb, 'import-person-dou', data.length);
+
+    return buildXlsxFile({
+        headers: HEADERS,
+        data,
+        columnWidths: COLUMN_WIDTHS,
+        sheetName: 'import-person-in-doo',
+        fileName: 'import-person-dou'
+    });
 }
