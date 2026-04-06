@@ -1,57 +1,68 @@
-import {
-    isRequired, isValidGUID,
-    isValidINN,
-    isValidRowsCount,
-    normalizeNumber,
-    validateGUID,
-    validateINN
-} from '../../utils/validators.js';
+// js/products/spo/index.js
 
-import {SPO_CONFIG} from "./config/constants.js";
+import { initProduct } from '../../core/initProduct.js';
+import { SPO_CONFIG } from './config/constants.js';
+import {generateSpoPersonFile} from "./templates/person.js";
+import {isRequired} from "../../utils/validators.js";
 
 export function initSPO() {
-    console.log('Инициализация СПО:', SPO_CONFIG);
-    const { buttonTexts, templateConfig } = SPO_CONFIG;
+    initProduct({
+        constants: SPO_CONFIG,
 
-//     DOOM элементы
-    const templateTypeSelect = document.getElementById('templateTypeSpo');
-    const loading = document.getElementById('loading');
-    const generateBtn = document.getElementById('generateBtnSpo');
-    const rowsCountInput = document.getElementById('rowsCountSpo');
-    const organizationNameInput = document.getElementById('spoOrgName');
-    const organizationUidInput = document.getElementById('spoOrgUid');
-    const groupIdInput = document.getElementById('spoGroupId');
-    const educProgramInput = document.getElementById('spoEducProgramName');
+        elements: {
+            generateBtn: document.getElementById('generateBtnSpo'),
+            templateTypeSelect: document.getElementById('templateTypeSpo'),
+            loading: document.getElementById('loading'),
 
-    const fields = {
-        rowsCount: document.querySelector('[for="rowsCountSpo"]')?.parentElement,
-        orgName: document.querySelector('[for="spoOrgName"]')?.parentElement,
-        orgUid: document.querySelector('[for="spoOrgUid"]')?.parentElement,
-        groupId: document.querySelector('[for="spoGroupId"]')?.parentElement,
-        educProgram : document.querySelector('[for="spoEducProgramName"]')?.parentElement,
-    }
+            rowsCountInput: document.getElementById('rowsCountSpo'),
+            orgNameInput: document.getElementById('spoOrgName'),
+            orgUidInput: document.getElementById('spoOrgUid'),
+            groupNameInput: document.getElementById('spoGroupName'),
+            educProgramInput: document.getElementById('spoEducProgramName')
+        },
 
-    if(!generateBtn) {
-        console.log('Элементы для СПО не найдены');
-    }
+        fields: {
+            rowsCount: document.querySelector('[for="rowsCountSpo"]')?.parentElement,
+            orgName: document.querySelector('[for="spoOrgName"]')?.parentElement,
+            orgUid: document.querySelector('[for="spoOrgUid"]')?.parentElement,
+            groupName: document.querySelector('[for="spoGroupName"]')?.parentElement,
+            educProgram: document.querySelector('[for="spoEducProgramName"]')?.parentElement
+        },
 
-    // ===== ОБРАБОТЧИК ШАБЛОНОВ =====
-    //     Подумать можно ли вынести функцию updateFormVisibility в общий файл и использовать ее для всех продуктов
+        generators: {
+            spoPersonTemplate: generateSpoPersonFile
+        },
 
-    if (templateTypeSelect) {
-        templateTypeSelect.addEventListener('change', () => {
-            const selectedValue = templateTypeSelect.value;
-
-            if (generateBtn && buttonTexts[selectedValue]) {
-                generateBtn.innerHTML = `<i class="fas fa-file-excel"></i> Сгенерировать ${buttonTexts[selectedValue]} и скачать XLSX файл`;
+        validators: {
+            spoPersonTemplate: (data) => {
+                if(!isRequired(data.orgName)) return alert('Введите краткое название ОО'), false;
+                if(!isRequired(data.orgUid)) return alert('Введите UID-организации'), false;
+                if(!isRequired(data.groupName)) return alert('Введите название группы'), false;
+                if(!isRequired(data.educProgram)) return alert('Введите название ОП'), false;
+                return true;
             }
-            // updateFormVisibility();
-        })
-        templateTypeSelect.dispatchEvent(new Event('change'));
-    }
+        },
 
-    // ===== ОСНОВНАЯ ФУНКЦИЯ ГЕНЕРАЦИИ =====
-    
+        collectData: (el) => ({
+            templateType: el.templateTypeSelect.value,
+            rowsCount: Number(el.rowsCountInput.value),
+            orgName: el.orgNameInput.value,
+            orgUid: el.orgUidInput.value,
+            groupName: el.groupNameInput.value,
+            educProgram: el.educProgramInput.value
+        }),
 
-
+        buildArgs: (data) => {
+            switch (data.templateType) {
+                case 'spoPersonTemplate':
+                    return [
+                        data.rowsCount,
+                        data.orgName,
+                        data.orgUid,
+                        data.groupName,
+                        data.educProgram
+                    ];
+            }
+        }
+    });
 }
