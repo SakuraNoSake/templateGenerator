@@ -1,5 +1,5 @@
 // templates/groups.js
-import {generateGroupName, getCurrentDate} from "../../../utils/generators.js";
+import {generateOrganizationData, getCurrentDate} from "../../../utils/generators.js";
 import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 
 const HEADERS = [
@@ -47,7 +47,7 @@ const COLUMN_WIDTHS = [
 ]
 
 function generateGroupRow (dooName, dooInn) {
-    const groupName = generateGroupName();
+    const groupName = generateOrganizationData();
     const educYear = getCurrentDate()
 
     return HEADERS.map(header => {
@@ -55,7 +55,7 @@ function generateGroupRow (dooName, dooInn) {
             'Краткое наименование ДОО' : dooName,
             'ИНН ДОО': dooInn,
             'Уникальный идентификатор группы из старой системы': '',
-            'Название группы': groupName,
+            'Название группы': groupName.groupName,
             'Учебный год в формате ГГГГ': educYear.year,
             'Дата начала действия в формате ДД.ММ.ГГГГ': '01.01.2026',
             'Дата окончания действия в формате ДД.ММ.ГГГГ': '01.01.2999',
