@@ -17,10 +17,13 @@ export function generateUUID() {
     }).toUpperCase();
 }
 
-export function generateGroupName() {
+export function generateOrganizationData() {
     const cleanUuid = generateUUID().replace(/-/g, '');
     const shortUid = cleanUuid.substring(0, 5);
-    return `imp_group_${shortUid}`;
+    return {
+        groupName: `imp_group_${shortUid}`,
+        educProgramName: `imp_educProgram_${shortUid}`,
+    }
 }
 
 export function getCurrentDate() {

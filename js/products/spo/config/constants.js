@@ -11,10 +11,12 @@ export const SPO_CONFIG = {
     buttonTexts: {
         spoPersonTemplate: 'ЛД',
         spoGroupTemplate: 'Группы',
-        spoEducProgramTemplate: 'Кадры'
+        spoEducProgramTemplate: 'ОП'
     },
 
     templateConfig: {
         spoPersonTemplate: ['orgName', 'orgUid', 'groupName', 'educProgram', 'rowsCount'],
+        spoGroupTemplate: ['orgName', 'orgUid', 'rowsCount'],
+        spoEducProgramTemplate: ['orgName', 'orgUid', 'rowsCount']
     }
 }

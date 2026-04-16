@@ -4,6 +4,7 @@ import { initProduct } from '../../core/initProduct.js';
 import { SPO_CONFIG } from './config/constants.js';
 import {generateSpoPersonFile} from "./templates/person.js";
 import {isRequired} from "../../utils/validators.js";
+import {generateEducProgramFile} from "./templates/educProgram.js";
 
 export function initSPO() {
     initProduct({
@@ -30,7 +31,8 @@ export function initSPO() {
         },
 
         generators: {
-            spoPersonTemplate: generateSpoPersonFile
+            spoPersonTemplate: generateSpoPersonFile,
+            spoEducProgramTemplate: generateEducProgramFile
         },
 
         validators: {
@@ -61,6 +63,19 @@ export function initSPO() {
                         data.orgUid,
                         data.groupName,
                         data.educProgram
+                    ];
+                case 'spoGroupTemplate':
+                    return [
+                        data.rowsCount,
+                        data.orgName,
+                        data.orgUid,
+                    ];
+
+                case 'spoEducProgramTemplate':
+                    return [
+                        data.rowsCount,
+                        data.orgName,
+                        data.orgUid,
                     ];
             }
         }
