@@ -19,7 +19,8 @@ export function initSPO() {
             orgNameInput: document.getElementById('spoOrgName'),
             orgUidInput: document.getElementById('spoOrgUid'),
             groupNameInput: document.getElementById('spoGroupName'),
-            educProgramInput: document.getElementById('spoEducProgramName')
+            educProgramInput: document.getElementById('spoEducProgramName'),
+            spoEducProgramIdInput: document.getElementById('spoEducProgramId')
         },
 
         fields: {
@@ -27,7 +28,8 @@ export function initSPO() {
             orgName: document.querySelector('[for="spoOrgName"]')?.parentElement,
             orgUid: document.querySelector('[for="spoOrgUid"]')?.parentElement,
             groupName: document.querySelector('[for="spoGroupName"]')?.parentElement,
-            educProgram: document.querySelector('[for="spoEducProgramName"]')?.parentElement
+            educProgram: document.querySelector('[for="spoEducProgramName"]')?.parentElement,
+            educProgramId: document.querySelector('[for="spoEducProgramId"]')?.parentElement
         },
 
         generators: {
@@ -41,6 +43,7 @@ export function initSPO() {
                 if(!isRequired(data.orgUid)) return alert('Введите UID-организации'), false;
                 if(!isRequired(data.groupName)) return alert('Введите название группы'), false;
                 if(!isRequired(data.educProgram)) return alert('Введите название ОП'), false;
+                if(!isRequired(data.educProgramId)) return alert('Введите ИД ОП'), false;
                 return true;
             }
         },
@@ -51,7 +54,8 @@ export function initSPO() {
             orgName: el.orgNameInput.value,
             orgUid: el.orgUidInput.value,
             groupName: el.groupNameInput.value,
-            educProgram: el.educProgramInput.value
+            educProgram: el.educProgramInput.value,
+            educProgramId: el.spoEducProgramIdInput.value
         }),
 
         buildArgs: (data) => {
@@ -69,13 +73,15 @@ export function initSPO() {
                         data.rowsCount,
                         data.orgName,
                         data.orgUid,
+                        data.educProgramId,
+                        data.educProgram
                     ];
 
                 case 'spoEducProgramTemplate':
                     return [
                         data.rowsCount,
                         data.orgName,
-                        data.orgUid,
+                        data.orgUid
                     ];
             }
         }
