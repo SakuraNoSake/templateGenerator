@@ -1,10 +1,10 @@
 // js/products/spo/index.js
-
 import { initProduct } from '../../core/initProduct.js';
 import { SPO_CONFIG } from './config/constants.js';
 import {generateSpoPersonFile} from "./templates/person.js";
 import {isRequired} from "../../utils/validators.js";
 import {generateEducProgramFile} from "./templates/educProgram.js";
+import {generateGroupSpoFile} from "./templates/group.js";
 
 export function initSPO() {
     initProduct({
@@ -34,6 +34,7 @@ export function initSPO() {
 
         generators: {
             spoPersonTemplate: generateSpoPersonFile,
+            spoGroupTemplate: generateGroupSpoFile,
             spoEducProgramTemplate: generateEducProgramFile
         },
 
