@@ -121,14 +121,14 @@ const COLUMN_WIDTHS = [
 function generatePersonRowSchool(orgGuid, groupName) {
     const sex = Math.random() > 0.5 ? '1' : '0';
     const agentSex = Math.random() > 0.5 ? '1' : '0';
-    const childData = generatePersonData(sex);
-    const childBirthDate = generateBirthDate({minAge: 6, maxAge: 18});
+    const childData = generatePersonData(sex)
+    const childBirthDate = generateBirthDate({minAge: 6, maxAge: 18})
     const childDocSeries = generateRandomDigits(4)
-    const childDocNumber = generateRandomDigits(6);
+    const childDocNumber = generateRandomDigits(6)
     const agentData = generatePersonData(sex)
-    const agentBirthDate = generateBirthDate({minAge: 20, maxAge: 45});
+    const agentBirthDate = generateBirthDate({minAge: 20, maxAge: 45})
     const agentDocSeries = generateRandomDigits(4)
-    const agentDocNumber = generateRandomDigits(6);
+    const agentDocNumber = generateRandomDigits(6)
     const currentData = getCurrentDate()
 
     return HEADERS.map(header => {
