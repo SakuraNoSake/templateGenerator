@@ -23,6 +23,7 @@ export function generateOrganizationData() {
     return {
         groupName: `imp_group_${shortUid}`,
         educProgramName: `imp_educProgram_${shortUid}`,
+        className: `Класс_${shortUid}`,
     }
 }
 
