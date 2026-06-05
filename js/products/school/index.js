@@ -3,6 +3,7 @@ import {SCHOOL_CONFIG} from "./config/constants.js";
 import {generatePersonSchoolFile} from "./templates/person.js";
 import {isRequired, validateGUID, validateINN} from "../../utils/validators.js";
 import {generateRequestSchoolFile} from "./templates/request.js";
+import {generateGroupSchoolFile} from "./templates/group.js";
 
 export function initSchool() {
     //Валидация числовых импутов
@@ -46,18 +47,9 @@ export function initSchool() {
 
         generators: {
             personSchool: generatePersonSchoolFile,
-            statementSchool: generateRequestSchoolFile
+            statementSchool: generateRequestSchoolFile,
+            groupSchool: generateGroupSchoolFile
         },
-
-        // validators: {
-        //     personSchool: (data) => {
-        //         if(!isRequired(data.orgGuid)) return alert('Введите CUID организации'), false
-        //         if(!isRequired(data.groupName)) return alert('Введите название класса/группы'), false
-        //         if(!isRequired(data.shortSchoolName)) return alert('Введите краткое название ОО'), false
-        //         if(!isRequired(data.schoolInn)) return alert('Введите ИНН организации'), false
-        //         return true;
-        //     }
-        // },
 
         validators: {
             statementSchool: (data) => {
