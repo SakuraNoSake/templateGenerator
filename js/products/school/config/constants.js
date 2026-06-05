@@ -16,6 +16,7 @@ export const SCHOOL_CONFIG = {
 
     templateConfig: {
         personSchool: ['orgGuid', 'groupName', 'rowsCount'],
+        groupSchool: ['orgGuid', 'shortSchoolName', 'rowsCount'],
         statementSchool: ['shortSchoolName', 'schoolInn', 'rowsCount'],
     }
 }

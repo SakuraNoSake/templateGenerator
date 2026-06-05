@@ -1,11 +1,11 @@
 // utils/validators.js
 export function validateINN(inn) {
     if (!inn) return false;
-    const cleanedInn = inn.replace(/\D/g, '');
-    if (cleanedInn.length !== 10 && cleanedInn.length !== 12) {
+
+    if (inn.length !== 10 && inn.length !== 12) {
         return false;
     }
-    return /^\d+$/.test(cleanedInn);
+    return /^\d+$/.test(inn);
 }
 
 export function calculateSNILSCheckSum(numbers) {
@@ -19,11 +19,11 @@ export function calculateSNILSCheckSum(numbers) {
 
 export function validateGUID(guid){
     if (!guid) return false;
-    const cleanedGuid = guid.replace(/\D/g, '');
-    if (cleanedGuid.length !== 16){
+
+    if (guid.length !== 16){
         return false
     }
-    return /^\d+$/.test(cleanedGuid);
+    return /^\d+$/.test(guid);
 }
 
 export function isRequired(value) {
