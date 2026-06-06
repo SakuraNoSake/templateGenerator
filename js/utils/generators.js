@@ -93,6 +93,6 @@ export function generatePersonData(sex) {
     return {
         firstName: getRandomElement(sex === '1' ? maleFirstNames : femaleFirstNames),
         lastName: getRandomElement(sex === '1' ? maleLastNames : femaleLastNames),
-        patronumic: getRandomElement(sex === '1' ? malePatronymics : femalePatronymics)
+        patronymic: getRandomElement(sex === '1' ? malePatronymics : femalePatronymics)
     };
 }

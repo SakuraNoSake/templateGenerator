@@ -1,7 +1,7 @@
 // js/products/dou/index.js
 
 import { initProduct } from '../../core/initProduct.js';
-import { DOU_CONSTANTS } from './config/constants.js';
+import { DOU_CONSTANTS } from './config/config.js';
 
 import { generateStatementsFile } from './templates/statements.js';
 import { generateGroupsFile } from './templates/groups.js';
@@ -47,6 +47,7 @@ export function initDOU() {
         input.addEventListener('input', (e) => {
             e.target.value = e.target.value
                 .replace(/\D/g, '')
+                .slice(0, 16)
         });
     });
 
@@ -144,7 +145,7 @@ export function initDOU() {
 
             staff: (data) => {
                 if (!validateGUID(data.guidDoo)) {
-                    alert('Введите валидный GUID Доо - 16 символов')
+                    alert('Введите валидный GUID ДОО - 16 символов')
                 }
             }
         },

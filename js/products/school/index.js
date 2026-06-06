@@ -1,5 +1,5 @@
 import {initProduct} from "../../core/initProduct.js";
-import {SCHOOL_CONFIG} from "./config/constants.js";
+import {SCHOOL_CONFIG} from "./config/config.js";
 import {generatePersonSchoolFile} from "./templates/person.js";
 import {isRequired, validateGUID, validateINN} from "../../utils/validators.js";
 import {generateRequestSchoolFile} from "./templates/request.js";
@@ -14,6 +14,7 @@ export function initSchool() {
         input.addEventListener('input', (e) => {
             e.target.value = e.target.value
                 .replace(/\D/g, '')
+                .slice(0, 16)
         });
     });
 
