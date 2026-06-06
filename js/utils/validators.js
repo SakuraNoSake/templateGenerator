@@ -1,10 +1,11 @@
+// utils/validators.js
 export function validateINN(inn) {
     if (!inn) return false;
-
-    if (inn.length !== 10 && inn.length !== 12) {
+    const cleanedInn = inn.replace(/\D/g, '');
+    if (cleanedInn.length !== 10 && cleanedInn.length !== 12) {
         return false;
     }
-    return /^\d+$/.test(inn);
+    return /^\d+$/.test(cleanedInn);
 }
 
 export function calculateSNILSCheckSum(numbers) {
@@ -16,21 +17,52 @@ export function calculateSNILSCheckSum(numbers) {
     return checkSum === 100 ? 0 : checkSum;
 }
 
-export function validateGUID(guid){
-    if (!guid) return false;
+export function validateForm(inputs) {
+    const { templateType, dooName, dooInn, rowsCount, requestStatus, requestType } = inputs;
 
-    if (guid.length !== 16){
-        return false
+    if (templateType === 'statements') {
+        if (!dooName) {
+            alert('Пожалуйста, введите краткое наименование ДОО');
+            return false;
+        }
+
+        if (!dooInn) {
+            alert('Пожалуйста, введите ИНН ДОО');
+            return false;
+        }
+
+        if (!validateINN(dooInn)) {
+            alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
+            return false;
+        }
+
+        if (isNaN(rowsCount) || rowsCount < 1) {
+            alert('Пожалуйста, введите корректное число строк (больше 0)');
+            return false;
+        }
+
+        if (rowsCount > 10000) {
+            if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
+                return false;
+            }
+        }
+
+        return {
+            dooName,
+            dooInn: dooInn.replace(/\D/g, ''),
+            rowsCount,
+            templateType,
+            requestStatus,
+            requestType
+        };
     }
-    return /^\d+$/.test(guid);
+
+    return {
+        dooName: '',
+        dooInn: '',
+        rowsCount: 0,
+        templateType,
+        requestStatus: 1,
+        requestType: 1
+    };
 }
-
-export function isRequired(value) {
-    return value && value.trim() !== '';
-}
-
-
-
-
-
-

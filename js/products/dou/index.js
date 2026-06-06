@@ -1,194 +1,287 @@
-// js/products/dou/index.js
-
-import { initProduct } from '../../core/initProduct.js';
-import { DOU_CONSTANTS } from './config/config.js';
-
+// products/dou/index.js
+import { validateINN } from '../../utils/validators.js';
+import { generateUUID, getCurrentDate, getCurrentTimestamp } from '../../utils/generators.js';
+import { DOU_CONSTANTS } from './config/constants.js';
 import { generateStatementsFile } from './templates/statements.js';
 import { generateGroupsFile } from './templates/groups.js';
-import { generatePersonFile } from './templates/person.js';
+import { generatePersonalFilesFile } from './templates/person.js';
 import { generateStaffFile } from './templates/staff.js';
 
-import {
-    isRequired,
-    validateGUID,
-    validateINN,
-} from '../../utils/validators.js';
-
 export function initDOU() {
+    console.log('Инициализация ДОУ с константами:', DOU_CONSTANTS);
+
+    // Элементы DOM для ДОУ
+    const generateBtn = document.getElementById('generateBtn');
+    const rowsCountInput = document.getElementById('rowsCount');
+    const dooNameInput = document.getElementById('dooName');
     const dooInnInput = document.getElementById('dooInn');
-    const educProgramIdInput = document.getElementById('educProgramId');
-    const commonValidators = {
-        dooName(data) {
-            if (!isRequired(data.dooName)) {
-                alert('Введите название организации');
-                return false;
-            }
-            return true;
-        },
+    const loading = document.getElementById('loading');
+    const templateTypeSelect = document.getElementById('templateType');
+    const requestStatusSelect = document.getElementById('requestStatus');
+    const requestTypeSelect = document.getElementById('requestType');
 
-        dooInn(data) {
-            if (!validateINN(data.dooInn)) {
-                alert('ИНН организации должен состоять из 10 или 12 цифр');
-                return false;
-            }
-            return true;
-        },
-
-        rowsCount(data) {
-            if (data.rowsCount <= 0) {
-                alert('Введите количество строк');
-                return false;
-            }
-            return true;
-        }
-    };
-
-    [dooInnInput, educProgramIdInput].forEach(input => {
-        input.addEventListener('input', (e) => {
-            e.target.value = e.target.value
-                .replace(/\D/g, '')
-                .slice(0, 16)
-        });
-    });
-
-    function runValidators(data, validators) {
-        return validators.every(validator => validator(data));
+    // Проверяем, что мы на форме ДОУ
+    if (!generateBtn) {
+        console.log('Не найдены элементы формы ДОУ');
+        return;
     }
 
-    initProduct({
-        constants: DOU_CONSTANTS,
+    // ===== ОБРАБОТЧИК ШАБЛОНОВ =====
 
-        elements: {
-            generateBtn: document.getElementById('generateBtn'),
-            templateTypeSelect: document.getElementById('templateType'),
-            loading: document.getElementById('loading'),
+    // Обработчик изменения выбора шаблона
+    if (templateTypeSelect) {
+        templateTypeSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
 
-            dooNameInput: document.getElementById('dooName'),
-            dooInnInput: document.getElementById('dooInn'),
-            rowsCountInput: document.getElementById('rowsCount'),
-            guidDooInput: document.getElementById('guidDoo'),
-            groupNameInput: document.getElementById('groupName'),
-            educProgramIdInput: document.getElementById('educProgramId'),
-            groupUidInput: document.getElementById('groupUid'),
+            // Обновляем текст кнопки в зависимости от шаблона
+            const buttonTexts = {
+                'statements': 'Заявления',
+                'personal_files': 'Личные дела',
+                'groups': 'Группы',
+                'staff': 'Кадры'
+            };
 
-            requestStatusSelect: document.getElementById('requestStatus'),
-            requestTypeSelect: document.getElementById('requestType')
-        },
+            if (generateBtn && buttonTexts[selectedValue]) {
+                generateBtn.innerHTML = `<i class="fas fa-file-excel"></i> Сгенерировать ${buttonTexts[selectedValue]} и скачать XLSX файл`;
+            }
 
-        fields: {
-            dooName: document.querySelector('[for="dooName"]')?.parentElement,
-            dooInn: document.querySelector('[for="dooInn"]')?.parentElement,
-            rowsCount: document.querySelector('[for="rowsCount"]')?.parentElement,
-            guidDoo: document.querySelector('[for="guidDoo"]')?.parentElement,
-            groupName: document.querySelector('[for="groupName"]')?.parentElement,
-            educProgramId: document.querySelector('[for="educProgramId"]')?.parentElement,
-            groupUid: document.querySelector('[for="groupUid"]')?.parentElement,
-            status: document.querySelector('[for="requestStatus"]')?.parentElement,
-            type: document.querySelector('[for="requestType"]')?.parentElement
-        },
+            // Показываем/скрываем поля статуса и типа заявлений
+            const statusField = document.querySelector('[for="requestStatus"]')?.parentElement;
+            const typeField = document.querySelector('[for="requestType"]')?.parentElement;
+            const dooNameField = document.querySelector('[for="dooName"]')?.parentElement;
+            const dooInnField = document.querySelector('[for="dooInn"]')?.parentElement;
+            const rowsCountField = document.querySelector('[for="rowsCount"]')?.parentElement;
 
-        generators: {
-            statements: generateStatementsFile,
-            groups: generateGroupsFile,
-            personal_files: generatePersonFile,
-            staff: generateStaffFile
-        },
+            if (selectedValue === 'statements') {
+                // Для заявлений показываем все поля
+                if (statusField) statusField.style.display = 'block';
+                if (typeField) typeField.style.display = 'block';
+                if (dooNameField) dooNameField.style.display = 'block';
+                if (dooInnField) dooInnField.style.display = 'block';
+                if (rowsCountField) rowsCountField.style.display = 'block';
 
-        validators: {
-            statements: (data) => {
-                if (!runValidators(data, [
-                    commonValidators.dooName,
-                    commonValidators.dooInn,
-                    commonValidators.rowsCount
-                ])) {
-                    return false;
+                // Обновляем подсказку для количества строк
+                const rowExample = document.querySelector('#rowsCount + .example');
+                if (rowExample) {
+                    rowExample.textContent = 'Максимум 10,000 строк за одну генерацию.';
                 }
+            } else {
+                // Для других шаблонов скрываем поля
+                if (statusField) statusField.style.display = 'none';
+                if (typeField) typeField.style.display = 'none';
+                if (dooNameField) dooNameField.style.display = 'none';
+                if (dooInnField) dooInnField.style.display = 'none';
+                if (rowsCountField) rowsCountField.style.display = 'none';
 
-                if (data.requestStatus === 3) {
-                    if (!isRequired(data.educProgramId)) {
-                        alert('Введите ИД образовательной программы');
-                        return false;
-                    }
-
-                    if (!isRequired(data.groupUid)) {
-                        alert('Введите Юид группы');
-                        return false;
-                    }
-                }
-
-                return true;
-            },
-
-            personal_files: (data) => {
-                if (!runValidators(data, [
-                    commonValidators.dooName,
-                    commonValidators.dooInn,
-                    commonValidators.rowsCount
-                ])) {
-                    return false;
-                }
-
-                if (!isRequired(data.groupName)) {
-                    alert('Введите название группы');
-                    return false;
-                }
-                return true;
-            },
-
-            groups: (data) => {
-                return runValidators(data, [
-                    commonValidators.dooName,
-                    commonValidators.dooInn,
-                    commonValidators.rowsCount
-                ]);
-            },
-
-            staff: (data) => {
-                if (!validateGUID(data.guidDoo)) {
-                    alert('Введите валидный GUID ДОО - 16 символов')
+                // Обновляем подсказку для количества строк
+                const rowExample = document.querySelector('#rowsCount + .example');
+                if (rowExample) {
+                    rowExample.textContent = 'Для данного шаблона будет создан пустой файл.';
                 }
             }
-        },
 
-        collectData: (el) => ({
-            templateType: el.templateTypeSelect.value,
-            dooName: el.dooNameInput.value,
-            dooInn: el.dooInnInput.value,
-            rowsCount: Number(el.rowsCountInput.value),
-            guidDoo: el.guidDooInput.value,
-            groupName: el.groupNameInput.value,
-            educProgramId: el.educProgramIdInput.value,
-            groupUid: el.groupUidInput.value,
-            requestStatus: Number(el.requestStatusSelect.value),
-            requestType: Number(el.requestTypeSelect.value)
-        }),
+            console.log(`Выбран шаблон: ${this.options[this.selectedIndex].text}`);
+        });
 
-        buildArgs: (data) => {
-            switch (data.templateType) {
-                case 'statements':
-                    return [
-                        data.rowsCount,
-                        data.dooName,
-                        data.dooInn,
-                        data.requestStatus,
-                        data.requestType,
-                        data.educProgramId,
-                        data.groupUid
-                    ];
-                case 'groups':
-                    return [data.rowsCount, data.dooName, data.dooInn];
-                case 'personal_files':
-                    return [data.rowsCount, data.dooName, data.dooInn, data.groupName];
-                case 'staff':
-                    return [data.rowsCount, data.guidDoo];
+        // Инициализируем при загрузке
+        templateTypeSelect.dispatchEvent(new Event('change'));
+    }
+
+    // ===== ОСНОВНАЯ ФУНКЦИЯ ГЕНЕРАЦИИ =====
+
+    function generateAndDownloadXLSX(rowsCount, dooName, dooInn, templateType = 'statements', requestStatus = 1, requestType = 1) {
+        loading.classList.add('active');
+        generateBtn.disabled = true;
+
+        const buttonTexts = {
+            'statements': 'Заявления',
+            'personal_files': 'Личные дела',
+            'groups': 'Группы',
+            'staff': 'Кадры'
+        };
+
+        generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Генерация ${buttonTexts[templateType] || 'файла'}...`;
+
+        // Имитация задержки для лучшего UX
+        setTimeout(() => {
+            try {
+                let result;
+
+                // Вызываем соответствующую функцию для выбранного шаблона
+                switch(templateType) {
+                    case 'statements':
+                        result = generateStatementsFile(rowsCount, dooName, dooInn, requestStatus, requestType);
+                        break;
+                    case 'groups':
+                        result = generateGroupsFile();
+                        break;
+                    case 'personal_files':
+                        result = generatePersonalFilesFile();
+                        break;
+                    case 'staff':
+                        result = generateStaffFile();
+                        break;
+                    default:
+                        throw new Error(`Неизвестный шаблон: ${templateType}`);
+                }
+
+                // Генерируем бинарные данные XLSX
+                const wbout = XLSX.write(result.wb, {bookType: 'xlsx', type: 'array'});
+
+                // Создаем Blob и скачиваем файл
+                const blob = new Blob([wbout], {type: 'application/octet-stream'});
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = result.filename;
+
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                console.log(`Файл "${result.filename}" успешно сгенерирован`);
+                if (templateType === 'statements') {
+                    console.log(`Количество записей: ${result.count}`);
+                    console.log(`Для ДОО: "${dooName}" (ИНН: ${dooInn})`);
+                    console.log(`Статус заявлений: ${requestStatus}, Тип заявлений: ${requestType}`);
+                }
+
+            } catch (error) {
+                console.error('Ошибка при генерации файла:', error);
+                alert('Произошла ошибка при генерации файла. Пожалуйста, попробуйте снова.');
+            } finally {
+                loading.classList.remove('active');
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `<i class="fas fa-file-excel"></i> Сгенерировать ${buttonTexts[templateType] || 'файл'} и скачать XLSX файл`;
             }
-        },
+        }, 500);
+    }
 
-        extraVisibilityLogic: (template, el, fields) => {
-            if (template === 'statements' && el.requestStatusSelect.value === '3') {
-                fields.educProgramId.style.display = 'flex';
-                fields.groupUid.style.display = 'flex';
+    // ===== ВАЛИДАЦИЯ ФОРМЫ =====
+
+    function validateForm() {
+        const dooName = dooNameInput.value.trim();
+        const dooInn = dooInnInput.value.trim();
+        const rowsCount = parseInt(rowsCountInput.value);
+        const templateType = templateTypeSelect ? templateTypeSelect.value : 'statements';
+        const requestStatus = requestStatusSelect ? parseInt(requestStatusSelect.value) : 1;
+        const requestType = requestTypeSelect ? parseInt(requestTypeSelect.value) : 1;
+
+        // Для шаблона "Заявления" проверяем обязательные поля
+        if (templateType === 'statements') {
+            if (!dooName) {
+                alert('Пожалуйста, введите краткое наименование ДОО');
+                dooNameInput.focus();
+                return false;
             }
+
+            if (!dooInn) {
+                alert('Пожалуйста, введите ИНН ДОО');
+                dooInnInput.focus();
+                return false;
+            }
+
+            if (!validateINN(dooInn)) {
+                alert('Пожалуйста, введите корректный ИНН (10 или 12 цифр)');
+                dooInnInput.focus();
+                return false;
+            }
+
+            if (isNaN(rowsCount) || rowsCount < 1) {
+                alert('Пожалуйста, введите корректное число строк (больше 0)');
+                rowsCountInput.focus();
+                return false;
+            }
+
+            if (rowsCount > 10000) {
+                if (!confirm(`Вы пытаетесь сгенерировать ${rowsCount} строк. Это может занять некоторое время. Продолжить?`)) {
+                    return false;
+                }
+            }
+
+            return {
+                dooName,
+                dooInn: dooInn.replace(/\D/g, ''),
+                rowsCount,
+                templateType,
+                requestStatus,
+                requestType
+            };
+        } else {
+            // Для других шаблонов поля ДОО не обязательны
+            return {
+                dooName: '',
+                dooInn: '',
+                rowsCount: 0,
+                templateType,
+                requestStatus: 1,
+                requestType: 1
+            };
         }
+    }
+
+    // ===== ОБРАБОТЧИК КЛИКА ПО КНОПКЕ =====
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', function() {
+            const validated = validateForm();
+
+            if (validated) {
+                generateAndDownloadXLSX(
+                    validated.rowsCount,
+                    validated.dooName,
+                    validated.dooInn,
+                    validated.templateType,
+                    validated.requestStatus,
+                    validated.requestType
+                );
+            }
+        });
+    }
+
+    // ===== ОБРАБОТЧИКИ КЛАВИШИ ENTER =====
+
+    function handleEnterKey(e) {
+        if (e.key === 'Enter' && generateBtn) {
+            generateBtn.click();
+        }
+    }
+
+    [rowsCountInput, dooNameInput, dooInnInput].forEach(input => {
+        if (input) input.addEventListener('keypress', handleEnterKey);
     });
+
+    // ===== ВАЛИДАЦИЯ ИНН ПРИ ВВОДЕ =====
+
+    if (dooInnInput) {
+        dooInnInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '').substring(0, 12);
+            e.target.value = value;
+
+            if (value.length > 0) {
+                const isValid = validateINN(value);
+                e.target.style.borderColor = isValid ? '#4CAF50' : '#ff6b6b';
+                e.target.style.backgroundColor = isValid ? '#f0fff0' : '#fff0f0';
+            } else {
+                e.target.style.borderColor = '#e0e0e0';
+                e.target.style.backgroundColor = '';
+            }
+        });
+    }
+
+    // ===== ПОДСВЕТКА ОБЯЗАТЕЛЬНЫХ ПОЛЕЙ =====
+
+    if (dooNameInput) {
+        dooNameInput.addEventListener('input', function(e) {
+            e.target.style.borderColor = e.target.value.trim() ? '#4CAF50' : '#e0e0e0';
+            e.target.style.backgroundColor = e.target.value.trim() ? '#f0fff0' : '';
+        });
+        dooNameInput.dispatchEvent(new Event('input'));
+    }
+
+    if (dooInnInput) dooInnInput.dispatchEvent(new Event('input'));
+
+    console.log('Генератор XLSX файлов для ДОУ успешно инициализирован!');
+    console.log('Доступные шаблоны:', DOU_CONSTANTS.templates);
 }
