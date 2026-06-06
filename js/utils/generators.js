@@ -17,12 +17,29 @@ export function generateUUID() {
     }).toUpperCase();
 }
 
+export function generateOrganizationData() {
+    const cleanUuid = generateUUID().replace(/-/g, '');
+    const shortUid = cleanUuid.substring(0, 5);
+    return {
+        groupName: `imp_group_${shortUid}`,
+        educProgramName: `imp_educProgram_${shortUid}`,
+        className: `Класс_${shortUid}`,
+    }
+}
+
 export function getCurrentDate() {
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const year = now.getFullYear();
-    return `${day}.${month}.${year}`;
+
+    return {
+        fullDate: `${day}.${month}.${year}`,
+        day: day,
+        month: month,
+        year: year,
+        shortYear: year.toString().slice(-2)
+    };
 }
 
 export function getCurrentTimestamp() {
@@ -58,25 +75,12 @@ export function generateRandomDigits(length) {
     return number;
 }
 
-export function generateChildBirthDate() {
-    const today = new Date();
-    const maxDate = today;
-    const minDate = new Date();
-    minDate.setFullYear(today.getFullYear() - 7);
-    const randomTimestamp = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
-    const randomDate = new Date(randomTimestamp);
-    const day = String(randomDate.getDate()).padStart(2, '0');
-    const month = String(randomDate.getMonth() + 1).padStart(2, '0');
-    const year = randomDate.getFullYear();
-    return `${day}.${month}.${year}`;
-}
-
-export function generateAgentBirthDate() {
+export function generateBirthDate(options) {
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setFullYear(today.getFullYear() - 20);
+    maxDate.setFullYear(today.getFullYear() - options.minAge);
     const minDate = new Date();
-    minDate.setFullYear(today.getFullYear() - 60);
+    minDate.setFullYear(today.getFullYear() - options.maxAge);
     const randomTimestamp = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
     const randomDate = new Date(randomTimestamp);
     const day = String(randomDate.getDate()).padStart(2, '0');
@@ -85,20 +89,10 @@ export function generateAgentBirthDate() {
     return `${day}.${month}.${year}`;
 }
 
-export function generateChildName(isMale) {
+export function generatePersonData(sex) {
     return {
-        firstName: getRandomElement(isMale ? maleFirstNames : femaleFirstNames),
-        lastName: getRandomElement(isMale ? maleLastNames : femaleLastNames)
+        firstName: getRandomElement(sex === '1' ? maleFirstNames : femaleFirstNames),
+        lastName: getRandomElement(sex === '1' ? maleLastNames : femaleLastNames),
+        patronymic: getRandomElement(sex === '1' ? malePatronymics : femalePatronymics)
     };
-}
-
-export function generateAgentName(sex) {
-    return {
-        firstName: getRandomElement(sex === 1 ? maleFirstNames : femaleFirstNames),
-        lastName: getRandomElement(sex === 1 ? maleLastNames : femaleLastNames)
-    };
-}
-
-export function generatePatronymic(isMale) {
-    return getRandomElement(isMale ? malePatronymics : femalePatronymics);
 }
