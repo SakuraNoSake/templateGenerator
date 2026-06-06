@@ -10,12 +10,50 @@ import { generateStaffFile } from './templates/staff.js';
 
 import {
     isRequired,
-    isValidGUID,
-    isValidINN,
-    isValidRowsCount
+    validateGUID,
+    validateINN,
 } from '../../utils/validators.js';
 
 export function initDOU() {
+    const dooInnInput = document.getElementById('dooInn');
+    const educProgramIdInput = document.getElementById('educProgramId');
+    const commonValidators = {
+        dooName(data) {
+            if (!isRequired(data.dooName)) {
+                alert('Введите название организации');
+                return false;
+            }
+            return true;
+        },
+
+        dooInn(data) {
+            if (!validateINN(data.dooInn)) {
+                alert('ИНН организации должен состоять из 10 или 12 цифр');
+                return false;
+            }
+            return true;
+        },
+
+        rowsCount(data) {
+            if (data.rowsCount <= 0) {
+                alert('Введите количество строк');
+                return false;
+            }
+            return true;
+        }
+    };
+
+    [dooInnInput, educProgramIdInput].forEach(input => {
+        input.addEventListener('input', (e) => {
+            e.target.value = e.target.value
+                .replace(/\D/g, '')
+        });
+    });
+
+    function runValidators(data, validators) {
+        return validators.every(validator => validator(data));
+    }
+
     initProduct({
         constants: DOU_CONSTANTS,
 
@@ -57,13 +95,57 @@ export function initDOU() {
 
         validators: {
             statements: (data) => {
-                if (!isRequired(data.dooName)) return alert('Введите ДОО'), false;
-                if (!isValidINN(data.dooInn)) return alert('ИНН некорректен'), false;
+                if (!runValidators(data, [
+                    commonValidators.dooName,
+                    commonValidators.dooInn,
+                    commonValidators.rowsCount
+                ])) {
+                    return false;
+                }
+
+                if (data.requestStatus === 3) {
+                    if (!isRequired(data.educProgramId)) {
+                        alert('Введите ИД образовательной программы');
+                        return false;
+                    }
+
+                    if (!isRequired(data.groupUid)) {
+                        alert('Введите Юид группы');
+                        return false;
+                    }
+                }
+
                 return true;
             },
-            staff: (data) => {
-                if (!isValidGUID(data.guidDoo)) return alert('GUID некорректен'), false;
+
+            personal_files: (data) => {
+                if (!runValidators(data, [
+                    commonValidators.dooName,
+                    commonValidators.dooInn,
+                    commonValidators.rowsCount
+                ])) {
+                    return false;
+                }
+
+                if (!isRequired(data.groupName)) {
+                    alert('Введите название группы');
+                    return false;
+                }
                 return true;
+            },
+
+            groups: (data) => {
+                return runValidators(data, [
+                    commonValidators.dooName,
+                    commonValidators.dooInn,
+                    commonValidators.rowsCount
+                ]);
+            },
+
+            staff: (data) => {
+                if (!validateGUID(data.guidDoo)) {
+                    alert('Введите валидный GUID Доо - 16 символов')
+                }
             }
         },
 

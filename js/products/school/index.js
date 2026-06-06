@@ -10,16 +10,11 @@ export function initSchool() {
     const orgGuidInput = document.getElementById('schoolOrgGuid');
     const schoolInnInput = document.getElementById('schoolInn');
 
-    orgGuidInput.addEventListener('input', (e) => {
-        e.target.value = e.target.value
-            .replace(/\D/g, '')
-            .slice(0, 16);
-    });
-
-    schoolInnInput.addEventListener('input', (e) => {
-        e.target.value = e.target.value
-            .replace(/\D/g, '')
-            .slice(0, 16);
+    [orgGuidInput, schoolInnInput].forEach(input => {
+        input.addEventListener('input', (e) => {
+            e.target.value = e.target.value
+                .replace(/\D/g, '')
+        });
     });
 
     initProduct({
@@ -53,11 +48,6 @@ export function initSchool() {
 
         validators: {
             statementSchool: (data) => {
-                if (!isRequired(data.schoolInn)) {
-                    alert('Введите ИНН организации');
-                    return false;
-                }
-
                 if (!validateINN(data.schoolInn)) {
                     alert('ИНН организации должен состоять из 10 или 12 цифр');
                     return false;
@@ -77,10 +67,6 @@ export function initSchool() {
             },
 
             personSchool: (data) => {
-                if (!isRequired(data.orgGuid)) {
-                    alert('Введите UID организации');
-                    return false;
-                }
 
                 if (!validateGUID(data.orgGuid)) {
                     alert('UID организации должен содержать 16 цифр');
@@ -100,10 +86,6 @@ export function initSchool() {
                 return true;
             },
             groupSchool: (data) => {
-                if (!isRequired(data.orgGuid)) {
-                    alert('Введите UID организации');
-                    return false;
-                }
 
                 if (!validateGUID(data.orgGuid)) {
                     alert('UID организации должен содержать 16 цифр');
