@@ -1,4 +1,3 @@
-// utils/validators.js
 export function validateINN(inn) {
     if (!inn) return false;
 
@@ -28,25 +27,6 @@ export function validateGUID(guid){
 
 export function isRequired(value) {
     return value && value.trim() !== '';
-}
-
-export function isValidINN(inn) {
-    const clean = inn.replace(/\D/g, '');
-    return clean.length === 10 || clean.length === 12;
-}
-
-export function isValidGUID(guid) {
-    const clean = guid.replace(/\D/g, '');
-    return clean.length === 16;
-}
-
-export function isValidRowsCount(value) {
-    const num = parseInt(value);
-    return !isNaN(num) && num > 0;
-}
-
-export function normalizeNumber(value) {
-    return value.replace(/\D/g, '');
 }
 
 
