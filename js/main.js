@@ -1,19 +1,8 @@
 import { initDOU } from './products/dou/index.js';
 import { initSchool } from './products/school/index.js';
 import { initSPO } from './products/spo/index.js';
-import { initAdditional } from './products/additional/index.js';
-import { pageTitles, pageSubtitles } from './config/constants.js';
-
-function getCurrentProduct() {
-    const activeForm = document.querySelector('.form-container.active');
-    if (activeForm) {
-        if (activeForm.id === 'douForm') return 'dou';
-        if (activeForm.id === 'schoolForm') return 'school';
-        if (activeForm.id === 'spoForm') return 'spo';
-        if (activeForm.id === 'udoForm') return 'udo';
-    }
-    return 'dou';
-}
+import { initContingent } from './products/contingent/index.js';
+import { pageTitles, pageSubtitles } from './config/config.js';
 
 function switchForm(formId) {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -59,8 +48,8 @@ function initCurrentProduct(productType) {
         case 'spo':
             initSPO();
             break;
-        case 'udo':
-            initAdditional();
+        case 'contingent':
+            initContingent();
             break;
     }
 }

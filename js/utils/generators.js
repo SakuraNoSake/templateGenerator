@@ -2,7 +2,7 @@
 import {
     maleFirstNames, femaleFirstNames, maleLastNames, femaleLastNames,
     malePatronymics, femalePatronymics, romanNumerals, cyrillicLetters
-} from '../config/constants.js';
+} from '../config/config.js';
 import { calculateSNILSCheckSum } from './validators.js';
 
 export function getRandomElement(array) {

@@ -1,9 +1,4 @@
-import {
-    generateBirthDate,
-    generatePersonData,
-    generateRandomDigits,
-    getCurrentDate
-} from "../../../utils/generators.js";
+import {generateBirthDate, generatePersonData, generateRandomDigits, getCurrentDate} from "../../../utils/generators.js";
 import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 
 const HEADERS = [
@@ -118,7 +113,7 @@ const COLUMN_WIDTHS = [
     {wch: 36}, // Дата зачисления
 ]
 
-function generatePersonRowSchool(orgGuid, groupName) {
+function generateContingentRow (orgGuid, groupName) {
     const sex = Math.random() > 0.5 ? '1' : '0';
     const agentSex = Math.random() > 0.5 ? '1' : '0';
     const childData = generatePersonData(sex)
@@ -191,19 +186,18 @@ function generatePersonRowSchool(orgGuid, groupName) {
     })
 }
 
-export function generatePersonSchoolFile(rowsCount, orgGuid, groupName) {
-
+export function generateContingentFile(rowsCount, orgGuid, groupName) {
     const data = [];
 
     for (let i = 0; i < rowsCount; i++) {
-        data.push(generatePersonRowSchool(orgGuid, groupName))
+        data.push(generateContingentRow(orgGuid, groupName))
     }
 
     return buildXlsxFile({
         headers: HEADERS,
         data,
         columnWidths: COLUMN_WIDTHS,
-        sheetName: 'Учащиеся. Обруч',
-        fileName: 'import-person-school'
+        sheetName: 'контингент. Обруч',
+        fileName: 'import-person'
     });
 }
