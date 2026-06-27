@@ -1,16 +1,12 @@
-// js/products/dou/index.js
-
 import { initProduct } from '../../core/initProduct.js';
-import { DOU_CONSTANTS } from './config/config.js';
+import { DOU_CONFIG } from './config/config.js';
 
 import { generateStatementsFile } from './templates/statements.js';
 import { generateGroupsFile } from './templates/groups.js';
 import { generatePersonFile } from './templates/person.js';
-import { generateStaffFile } from './templates/staff.js';
 
 import {
     isRequired,
-    validateGUID,
     validateINN,
 } from '../../utils/validators.js';
 
@@ -56,7 +52,7 @@ export function initDOU() {
     }
 
     initProduct({
-        constants: DOU_CONSTANTS,
+        constants: DOU_CONFIG,
 
         elements: {
             generateBtn: document.getElementById('generateBtn'),
@@ -91,7 +87,6 @@ export function initDOU() {
             statements: generateStatementsFile,
             groups: generateGroupsFile,
             personal_files: generatePersonFile,
-            staff: generateStaffFile
         },
 
         validators: {
@@ -141,12 +136,6 @@ export function initDOU() {
                     commonValidators.dooInn,
                     commonValidators.rowsCount
                 ]);
-            },
-
-            staff: (data) => {
-                if (!validateGUID(data.guidDoo)) {
-                    alert('Введите валидный GUID ДОО - 16 символов')
-                }
             }
         },
 
@@ -179,8 +168,6 @@ export function initDOU() {
                     return [data.rowsCount, data.dooName, data.dooInn];
                 case 'personal_files':
                     return [data.rowsCount, data.dooName, data.dooInn, data.groupName];
-                case 'staff':
-                    return [data.rowsCount, data.guidDoo];
             }
         },
 

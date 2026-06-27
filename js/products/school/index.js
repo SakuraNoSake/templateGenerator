@@ -1,6 +1,5 @@
 import {initProduct} from "../../core/initProduct.js";
 import {SCHOOL_CONFIG} from "./config/config.js";
-import {generatePersonSchoolFile} from "./templates/person.js";
 import {isRequired, validateGUID, validateINN} from "../../utils/validators.js";
 import {generateRequestSchoolFile} from "./templates/request.js";
 import {generateGroupSchoolFile} from "./templates/group.js";
@@ -42,7 +41,6 @@ export function initSchool() {
         },
 
         generators: {
-            personSchool: generatePersonSchoolFile,
             statementSchool: generateRequestSchoolFile,
             groupSchool: generateGroupSchoolFile
         },
@@ -67,25 +65,6 @@ export function initSchool() {
                 return true;
             },
 
-            personSchool: (data) => {
-
-                if (!validateGUID(data.orgGuid)) {
-                    alert('UID организации должен содержать 16 цифр');
-                    return false;
-                }
-
-                if (!isRequired(data.groupName)) {
-                    alert('Введите название класса/группы');
-                    return false;
-                }
-
-                if (data.rowsCount <= 0) {
-                    alert('Введите количество строк');
-                    return false;
-                }
-
-                return true;
-            },
             groupSchool: (data) => {
 
                 if (!validateGUID(data.orgGuid)) {
@@ -123,12 +102,6 @@ export function initSchool() {
                         data.rowsCount,
                         data.shortSchoolName,
                         data.schoolInn
-                    ];
-                case 'personSchool':
-                    return [
-                        data.rowsCount,
-                        data.orgGuid,
-                        data.groupName
                     ];
                 case 'groupSchool':
                     return [

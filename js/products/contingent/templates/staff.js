@@ -43,7 +43,7 @@ const COLUMN_WIDTHS = [
     {wch: 25},  // Кем выдано
 ]
 
-function generateStaffRow (guidDoo) {
+function generateStaffRow (orgGuid) {
     const sex = Math.random() > 0.5 ? '1' : '0';
     const employee = generatePersonData(sex);
     const employeeBirthDate = generateBirthDate({ minAge: 20, maxAge: 50 })
@@ -53,7 +53,7 @@ function generateStaffRow (guidDoo) {
 
     return HEADERS.map(header => {
         const rowObj = {
-            'GUID школы 16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО. Список GUID можно получить в выгрузке из реестра.': guidDoo,
+            'GUID школы 16-циферный идентификатор ОО в АИС. Отображается в адресной строке, если открыть карточку ОО. Список GUID можно получить в выгрузке из реестра.': orgGuid,
             'Унаследованный номер': '',
             'Фамилия Строго кириллица, допустимы пробел и дефис': employee.lastName,
             'Имя Строго кириллица, допустимы пробел и дефис': employee.firstName,
@@ -76,11 +76,11 @@ function generateStaffRow (guidDoo) {
     });
 }
 
-export function generateStaffFile(rowsCount, guidDoo) {
+export function generateStaffFile(rowsCount, orgGuid) {
     const data = [];
 
     for (let i = 0; i < rowsCount; i++) {
-        data.push(generateStaffRow(guidDoo));
+        data.push(generateStaffRow(orgGuid));
     }
 
     return buildXlsxFile({
@@ -88,6 +88,6 @@ export function generateStaffFile(rowsCount, guidDoo) {
         data,
         columnWidths: COLUMN_WIDTHS,
         sheetName: 'Сотрудники',
-        fileName: 'import-staff-in-doo'
+        fileName: 'import-staff'
     });
 }
