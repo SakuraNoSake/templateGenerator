@@ -1,4 +1,3 @@
-// templates/personal-files.js
 import {
     generateBirthDate,
     generatePersonData,

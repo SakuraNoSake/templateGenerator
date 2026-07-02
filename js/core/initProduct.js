@@ -1,5 +1,3 @@
-// js/core/initProduct.js
-
 export function initProduct(config) {
     const {
         constants,

@@ -1,7 +1,5 @@
-// templates/statements.js
 import {
-    generateUUID, getCurrentDate,
-    generateSNILS, generateSorSeries, generateRandomDigits, generatePersonData, generateBirthDate
+    generateUUID, getCurrentDate, generateSorSeries, generateRandomDigits, generatePersonData, generateBirthDate
 } from '../../../utils/generators.js';
 import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 

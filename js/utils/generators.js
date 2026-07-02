@@ -1,4 +1,3 @@
-// utils/generators.js
 import {
     maleFirstNames, femaleFirstNames, maleLastNames, femaleLastNames,
     malePatronymics, femalePatronymics, romanNumerals, cyrillicLetters

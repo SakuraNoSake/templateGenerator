@@ -8,7 +8,6 @@
     --subtext: #6b7280;
 }
 
-/* RESET */
 * {
     margin: 0;
     padding: 0;
@@ -33,7 +32,6 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(79,70,229,0.15) !important;
 }
 
-/* BODY */
 body {
     font-family: 'Segoe UI', sans-serif;
     background: var(--bg);
@@ -47,7 +45,6 @@ body {
     color: var(--primary-hover);
 }
 
-/* HEADER */
 .page-header {
     margin-bottom: 30px;
 }
@@ -64,7 +61,6 @@ body {
     text-align: center;
 }
 
-/* NAVBAR */
 .navbar {
     background: white;
     border-bottom: 1px solid #e5e7eb;
@@ -103,14 +99,12 @@ body {
     color: #4f46e5;
 }
 
-/* MAIN */
 .main-content {
     max-width: 1200px;
     margin: 30px auto;
     padding: 0 20px;
 }
 
-/* FORM CARD */
 .form-container {
     display: none;
     background: var(--card);
@@ -125,7 +119,6 @@ body {
     display: block;
 }
 
-/* SECTION */
 .section {
     margin-bottom: 15px;
 }
@@ -138,7 +131,6 @@ body {
     gap: 8px;
 }
 
-/* GRID */
 .form-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -151,14 +143,12 @@ body {
     gap: 20px;
 }
 
-/* FIELD */
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-/* LABEL */
 label {
     font-size: 14px;
     margin-bottom: 6px;
@@ -166,7 +156,6 @@ label {
     display: block;
 }
 
-/* HELP TEXT */
 .example {
     font-size: 12px;
     color: var(--subtext);
@@ -174,7 +163,6 @@ label {
     min-height: 28px;
 }
 
-/* BUTTON */
 .generate-btn {
     width: 100%;
     height: 50px;
@@ -193,7 +181,6 @@ label {
     transform: translateY(-1px);
 }
 
-/* LOADING */
 .loading {
     display: none;
     text-align: center;
@@ -207,7 +194,6 @@ label {
     display: block;
 }
 
-/* SPINNER */
 .spinner {
     width: 40px;
     height: 40px;
@@ -224,14 +210,12 @@ label {
     }
 }
 
-/* COMING SOON */
 .coming-soon {
     text-align: center;
     padding: 40px;
     color: var(--subtext);
 }
 
-/* MOBILE */
 @media (max-width: 600px) {
     .page-header h1 {
         font-size: 22px;

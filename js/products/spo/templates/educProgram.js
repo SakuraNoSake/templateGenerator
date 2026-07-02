@@ -46,10 +46,8 @@ const COLUMN_WIDTHS = [
 ]
 
 function generateEducProgramRow(orgName, orgUid) {
-
     const educProgramName = generateOrganizationData()
     return HEADERS.map(header => {
-
         const rowObj = {
             'Краткое наименование ОО из ИС': orgName,
             'GUID колледжа из ИС': orgUid,
@@ -74,7 +72,7 @@ function generateEducProgramRow(orgName, orgUid) {
         return rowObj[header] ?? '';
     });
 }
-//тест
+
 export function generateEducProgramFile(rowsCount, orgName, orgUid) {
     const data = [];
 

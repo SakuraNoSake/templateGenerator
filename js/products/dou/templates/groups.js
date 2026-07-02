@@ -1,4 +1,3 @@
-// templates/groups.js
 import {generateOrganizationData, getCurrentDate} from "../../../utils/generators.js";
 import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 
