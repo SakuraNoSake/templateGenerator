@@ -5,7 +5,6 @@ import {generateRequestSchoolFile} from "./templates/request.js";
 import {generateGroupSchoolFile} from "./templates/group.js";
 
 export function initSchool() {
-    //Валидация числовых импутов
     const orgGuidInput = document.getElementById('schoolOrgGuid');
     const schoolInnInput = document.getElementById('schoolInn');
 

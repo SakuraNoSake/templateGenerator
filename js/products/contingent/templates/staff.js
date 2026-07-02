@@ -1,4 +1,3 @@
-// templates/staff.js
 import {generateBirthDate, generatePersonData, generateRandomDigits, generateSNILS} from "../../../utils/generators.js";
 import {buildXlsxFile} from "../../../utils/xlsxBuilder.js";
 

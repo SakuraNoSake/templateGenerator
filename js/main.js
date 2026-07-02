@@ -33,7 +33,6 @@ function switchForm(formId) {
 
     localStorage.setItem('selectedForm', formId);
 
-    // Инициализируем соответствующий продукт
     initCurrentProduct(formId);
 }
 
