@@ -43,7 +43,7 @@ export function initDOU() {
         input.addEventListener('input', (e) => {
             e.target.value = e.target.value
                 .replace(/\D/g, '')
-                .slice(0, 16)
+                .slice(0, 12)
         });
     });
 
