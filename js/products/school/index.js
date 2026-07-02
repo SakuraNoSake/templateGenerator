@@ -8,13 +8,17 @@ export function initSchool() {
     const orgGuidInput = document.getElementById('schoolOrgGuid');
     const schoolInnInput = document.getElementById('schoolInn');
 
-    [orgGuidInput, schoolInnInput].forEach(input => {
-        input.addEventListener('input', (e) => {
-            e.target.value = e.target.value
-                .replace(/\D/g, '')
-                .slice(0, 16)
-        });
-    });
+    orgGuidInput.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+            .slice(0, 16)
+    })
+
+    schoolInnInput.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+            .slice(0, 12)
+    })
 
     initProduct({
         constants: SCHOOL_CONFIG,
