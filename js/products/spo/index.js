@@ -42,18 +42,20 @@ export function initSPO() {
         }
     };
 
-    [orgUidInput, educProgramIdInput].forEach(input => {
-        input.addEventListener('input', (e) => {
-            e.target.value = e.target.value
-                .replace(/\D/g, '')
-                .slice(0, 16)
-        });
-    });
+    educProgramIdInput.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+    })
+
+    orgUidInput.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+            .slice(0, 16)
+    })
 
     function runValidators(data, validators) {
         return validators.every(validator => validator(data));
     }
-
 
     initProduct({
         constants: SPO_CONFIG,
