@@ -24,7 +24,7 @@ export function initDOU() {
 
         dooInn(data) {
             if (!validateINN(data.dooInn)) {
-                alert('ИНН организации должен состоять из 10 или 12 цифр');
+                alert('ИНН организации должен состоять из 10 цифр');
                 return false;
             }
             return true;
@@ -39,13 +39,16 @@ export function initDOU() {
         }
     };
 
-    [dooInnInput, educProgramIdInput].forEach(input => {
-        input.addEventListener('input', (e) => {
-            e.target.value = e.target.value
-                .replace(/\D/g, '')
-                .slice(0, 12)
-        });
-    });
+    educProgramIdInput.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+    })
+
+    dooInnInput.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+            .slice(0, 10)
+    })
 
     function runValidators(data, validators) {
         return validators.every(validator => validator(data));

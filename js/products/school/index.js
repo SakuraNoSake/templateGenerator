@@ -17,7 +17,7 @@ export function initSchool() {
     schoolInnInput.addEventListener('input', (e)=>{
         e.target.value = e.target.value
             .replace(/\D/g, '')
-            .slice(0, 12)
+            .slice(0, 10)
     })
 
     initProduct({
@@ -51,7 +51,7 @@ export function initSchool() {
         validators: {
             statementSchool: (data) => {
                 if (!validateINN(data.schoolInn)) {
-                    alert('ИНН организации должен состоять из 10 или 12 цифр');
+                    alert('ИНН организации должен состоять из 10 цифр');
                     return false;
                 }
 

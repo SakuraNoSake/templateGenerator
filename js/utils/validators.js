@@ -1,7 +1,6 @@
 export function validateINN(inn) {
     if (!inn) return false;
-
-    if (inn.length !== 10 && inn.length !== 12) {
+    if (inn.length !== 10) {
         return false;
     }
     return /^\d+$/.test(inn);
