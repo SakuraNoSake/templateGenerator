@@ -1,13 +1,14 @@
 import { initProduct } from '../../core/initProduct.js';
 import { SPO_CONFIG } from './config/config.js';
 import {generateSpoPersonFile} from "./templates/person.js";
-import {isRequired, validateGUID} from "../../utils/validators.js";
+import {isRequired, validateGUID, validateINN, validateKPP} from "../../utils/validators.js";
 import {generateEducProgramFile} from "./templates/educProgram.js";
 import {generateGroupSpoFile} from "./templates/group.js";
 
 export function initSPO() {
     const orgUidInput = document.getElementById('spoOrgUid');
-    const educProgramIdInput = document.getElementById('spoEducProgramId');
+    const orgInn = document.getElementById('orgInn');
+    const orgKpp = document.getElementById('orgKpp');
     const commonValidators = {
         orgName(data) {
             if (!isRequired(data.orgName)) {
@@ -25,6 +26,14 @@ export function initSPO() {
             return true;
         },
 
+        educProgram(data) {
+            if (!isRequired(data.educProgram)) {
+                alert('Введите обзаровательную программу');
+                return false;
+            }
+            return true;
+        },
+
         rowsCount(data) {
             if (data.rowsCount <= 0) {
                 alert('Введите количество строк');
@@ -32,25 +41,24 @@ export function initSPO() {
             }
             return true;
         },
-
-        educProgram(data) {
-            if (!isRequired(data.educProgram)) {
-                alert('Введите обзаровательную программу');
-                return false;
-            }
-            return true;
-        }
     };
-
-    educProgramIdInput.addEventListener('input', (e)=>{
-        e.target.value = e.target.value
-            .replace(/\D/g, '')
-    })
 
     orgUidInput.addEventListener('input', (e)=>{
         e.target.value = e.target.value
             .replace(/\D/g, '')
             .slice(0, 16)
+    })
+
+    orgInn.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+            .slice(0, 10)
+    })
+
+    orgKpp.addEventListener('input', (e)=>{
+        e.target.value = e.target.value
+            .replace(/\D/g, '')
+            .slice(0, 9)
     })
 
     function runValidators(data, validators) {
@@ -68,7 +76,10 @@ export function initSPO() {
             rowsCountInput: document.getElementById('rowsCountSpo'),
             orgNameInput: document.getElementById('spoOrgName'),
             orgUidInput: document.getElementById('spoOrgUid'),
-            groupNameInput: document.getElementById('spoGroupName'),
+            orgInnInput: document.getElementById('orgInn'),
+            orgKppInput: document.getElementById('orgKpp'),
+            rkIdGroupInput: document.getElementById('rkIdGroup'),
+            rkUidEducProgramInput: document.getElementById('rkUidEducProgram'),
             educProgramInput: document.getElementById('spoEducProgramName'),
             spoEducProgramIdInput: document.getElementById('spoEducProgramId')
         },
@@ -76,10 +87,13 @@ export function initSPO() {
         fields: {
             rowsCount: document.querySelector('[for="rowsCountSpo"]')?.parentElement,
             orgName: document.querySelector('[for="spoOrgName"]')?.parentElement,
+            orgInn: document.querySelector('[for="orgInn"]')?.parentElement,
+            orgKpp: document.querySelector('[for="orgKpp"]')?.parentElement,
             orgUid: document.querySelector('[for="spoOrgUid"]')?.parentElement,
-            groupName: document.querySelector('[for="spoGroupName"]')?.parentElement,
+            rkIdGroup: document.querySelector('[for="rkIdGroup"]')?.parentElement,
+            rkUidEducProgram: document.querySelector('[for="rkUidEducProgram"]')?.parentElement,
             educProgram: document.querySelector('[for="spoEducProgramName"]')?.parentElement,
-            educProgramId: document.querySelector('[for="spoEducProgramId"]')?.parentElement
+            educProgramId: document.querySelector('[for="spoEducProgramId"]')?.parentElement,
         },
 
         generators: {
@@ -92,15 +106,33 @@ export function initSPO() {
             spoPersonTemplate: (data) => {
                 if (!runValidators(data, [
                     commonValidators.orgName,
-                    commonValidators.orgUid,
                     commonValidators.rowsCount,
-                    commonValidators.educProgram
                 ])) {
                     return false;
                 }
 
-                if (!isRequired(data.groupName)) {
-                    alert('Введите название группы');
+                if (!isRequired(data.orgInn)) {
+                    alert('Введите ИНН организации');
+                    return false;
+                }
+
+                if(!validateINN(data.orgInn)){
+                    alert('ИНН организации должен состоять из 10 цифр');
+                    return false;
+                }
+
+                if(!validateKPP(data.orgKpp)){
+                    alert('КПП организации должен состоять из 9 цифр');
+                    return false;
+                }
+
+                if (!isRequired(data.rkIdGroup)) {
+                    alert('Введите РК-UID группы');
+                    return false;
+                }
+
+                if (!isRequired(data.rkUidEducProgram)) {
+                    alert('Введите РК-UID образовательной программы');
                     return false;
                 }
                 return true;
@@ -137,7 +169,10 @@ export function initSPO() {
             rowsCount: Number(el.rowsCountInput.value),
             orgName: el.orgNameInput.value,
             orgUid: el.orgUidInput.value,
-            groupName: el.groupNameInput.value,
+            orgInn: el.orgInnInput.value,
+            orgKpp: el.orgKppInput.value,
+            rkIdGroup: el.rkIdGroupInput.value,
+            rkUidEducProgram: el.rkUidEducProgramInput.value,
             educProgram: el.educProgramInput.value,
             educProgramId: el.spoEducProgramIdInput.value
         }),
@@ -148,9 +183,10 @@ export function initSPO() {
                     return [
                         data.rowsCount,
                         data.orgName,
-                        data.orgUid,
-                        data.groupName,
-                        data.educProgram
+                        data.orgInn,
+                        data.orgKpp,
+                        data.rkIdGroup,
+                        data.rkUidEducProgram
                     ];
                 case 'spoGroupTemplate':
                     return [
