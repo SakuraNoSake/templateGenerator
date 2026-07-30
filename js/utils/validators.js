@@ -6,6 +6,14 @@ export function validateINN(inn) {
     return /^\d+$/.test(inn);
 }
 
+export function validateKPP(kpp) {
+    if (!kpp) return false;
+    if (kpp.length !== 9) {
+        return false;
+    }
+    return /^\d+$/.test(kpp);
+}
+
 export function calculateSNILSCheckSum(numbers) {
     let sum = 0;
     for (let i = 0; i < 9; i++) {

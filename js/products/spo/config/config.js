@@ -15,7 +15,7 @@ export const SPO_CONFIG = {
     },
 
     templateConfig: {
-        spoPersonTemplate: ['orgName', 'orgUid', 'groupName', 'educProgram', 'rowsCount'],
+        spoPersonTemplate: ['orgName', 'orgInn', 'orgKpp', 'rkIdGroup', 'rkUidEducProgram', 'rowsCount'],
         spoGroupTemplate: ['orgName', 'orgUid', 'educProgramId', 'educProgram', 'rowsCount'],
         spoEducProgramTemplate: ['orgName', 'orgUid', 'rowsCount']
     }
